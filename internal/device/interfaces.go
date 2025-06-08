@@ -7,8 +7,8 @@ type Modbus interface {
 	Close() error
 }
 
-// DeviceReader defines the interface for reading device data
-type DeviceReader interface {
+// PxuReader defines the interface for reading device data
+type PxuReader interface {
 	ReadStats() (*Stats, error)
 	ReadInfo() (*Info, error)
 	ReadProfile() error

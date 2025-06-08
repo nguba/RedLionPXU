@@ -32,11 +32,17 @@ func main() {
 	defer client.Close()
 
 	// Create PXU instance
-	pxu, err := device.NewPxu(uint8(*unitID), client, 5*time.Second, 3)
+	pxu, err := device.NewPxu(uint8(*unitID), client, 3*time.Second, 30)
 	if err != nil {
 		log.Fatalf("Failed to create PXU: %v", err)
 	}
 	defer pxu.Close()
+
+	info, err := pxu.ReadInfo()
+	if err != nil {
+		log.Fatalf("Failed to read info: %v", err)
+	}
+	fmt.Println(info)
 
 	stats, err := pxu.ReadStats()
 	if err != nil {

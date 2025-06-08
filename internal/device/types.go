@@ -23,6 +23,18 @@ type Stats struct {
 	PSR    float64   `json:"psr"`
 }
 
+func (s Stats) String() string {
+	return fmt.Sprintf(
+		"PV:%.1f%s SP:%.1f%s | Out1:%t Out2:%t AT:%t | TP:%.1f TI:%d TD:%d TGroup:%d | RS:%s | PC:%d PS:%d PSR:%.1f",
+		s.Pv, s.VUnit,
+		s.Sp, s.VUnit,
+		s.Out1, s.Out2, s.At,
+		s.TP, s.TI, s.TD, s.TGroup,
+		s.RS,
+		s.PC, s.PS, s.PSR,
+	)
+}
+
 type Info struct {
 	Model    string `json:"model"`
 	Firmware string `json:"firmware"`
@@ -32,7 +44,7 @@ func (info Info) String() string {
 	return fmt.Sprintf("Model: %s, Firmware: %s", strings.Trim(info.Model, " "), info.Firmware)
 }
 
-// RunStatus represents device run status
+// RunStatus shows the state of the device: RunStatusStop, RunStatusRun, RunStatusEnd, RunStatusPause, RunStatusAdvanceProfile
 type RunStatus uint16
 
 const (
