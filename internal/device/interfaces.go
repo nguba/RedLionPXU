@@ -1,0 +1,16 @@
+package device
+
+// Modbus defines the interface for Modbus communication
+type Modbus interface {
+	SetUnitId(id uint8) error
+	ReadRegisters(address, quantity uint16) ([]uint16, error)
+	Close() error
+}
+
+// DeviceReader defines the interface for reading device data
+type DeviceReader interface {
+	ReadStats() (*Stats, error)
+	ReadInfo() (*Info, error)
+	ReadProfile() error
+	Close() error
+}
