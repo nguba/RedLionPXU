@@ -134,13 +134,28 @@ func fillProfile(profile *Profile, regs []uint16) {
 }
 
 func (p *Pxu) UpdateSetpoint(value float64) error {
-	return p.client.SetRegister(RegSP, toUint16(value))
+	err := p.client.SetRegister(RegSP, toUint16(value))
+	if err != nil {
+		return fmt.Errorf("failed to update sp to %.1f: %w", value, err)
+	}
+	log.Printf("updated sp to %.1f", value)
+	return nil
 }
 
 func (p *Pxu) Stop() error {
-	return p.client.SetRegister(17, 0)
+	err := p.client.SetRegister(17, 0)
+	if err != nil {
+		return fmt.Errorf("failed to stop unit %d: %w", p.unitId, err)
+	}
+	log.Printf("stopped unit %d", p.unitId)
+	return nil
 }
 
 func (p *Pxu) Start() error {
-	return p.client.SetRegister(17, 1)
+	err := p.client.SetRegister(17, 1)
+	if err != nil {
+		return fmt.Errorf("failed to stop unit %d: %w", p.unitId, err)
+	}
+	log.Printf("started unit %d", p.unitId)
+	return nil
 }

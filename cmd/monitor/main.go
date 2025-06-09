@@ -65,7 +65,6 @@ func main() {
 	}
 
 	val := 35.0
-	fmt.Printf("Setting Sp to %.1f\n", val)
 	if err := pxu.UpdateSetpoint(val); err != nil {
 		log.Fatalf("Failed to write Sp: %v", err)
 	}
@@ -79,7 +78,6 @@ func main() {
 	if err := pxu.Stop(); err != nil {
 		log.Fatalf("Failed to stop controller: %v", err)
 	}
-
 	showStats(pxu)
 
 }
