@@ -83,13 +83,13 @@ type Configuration struct {
 }
 
 type Segment struct {
-	Num uint8
+	Pos uint8
 	Sp  uint16
 	T   uint16
 }
 
 type Profile struct {
-	Num      uint8
+	Id       uint8
 	SegCount uint16
 	Segments []Segment
 }

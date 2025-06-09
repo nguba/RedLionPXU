@@ -97,38 +97,35 @@ func (p *Pxu) ReadInfo() (*Info, error) {
 	return NewInfo(regs)
 }
 
-func (p *Pxu) ReadProfile(number uint8) error {
-	if number > 16 {
-		return fmt.Errorf("invalid profile selected: %d", number)
+func (p *Pxu) ReadProfile(id uint8) (*Profile, error) {
+	if id > 16 {
+		return nil, fmt.Errorf("invalid profile id selected: %d", id)
 	}
 
-	profile := Profile{Num: number}
+	profile := Profile{Id: id}
 
 	// read the number of segments this profile spans
 	segReg, err := p.readRegistersWithRetry(RegNumSegmentsStart, 1)
 	if err != nil {
-		return fmt.Errorf("failed reading registers from unit %d: %w", p.unitId, err)
+		return nil, fmt.Errorf("failed reading registers from unit %d: %w", p.unitId, err)
 	}
 	// this is how many segments are configured in this profile.
 	profile.SegCount = segReg[0]
 
 	reg, err := p.readRegistersWithRetry(RegProfSegmentStart, profile.SegCount*2)
 	if err != nil {
-		return fmt.Errorf("failed reading profile from unit %d: %w", p.unitId, err)
+		return nil, fmt.Errorf("failed reading profile from unit %d: %w", p.unitId, err)
 	}
 
 	var Sp uint16 = 0
 	for i := uint16(0); i < profile.SegCount; i++ {
 		seg := Segment{
-			Num: uint8(i),
+			Pos: uint8(i),
 			Sp:  reg[Sp],
 			T:   reg[Sp+1],
 		}
 		profile.Segments = append(profile.Segments, seg)
 		Sp += 2
 	}
-
-	fmt.Printf("profile: %+v\n", profile)
-
-	return nil
+	return &profile, nil
 }

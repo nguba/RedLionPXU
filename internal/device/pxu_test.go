@@ -2,6 +2,7 @@
 package device
 
 import (
+	"reflect"
 	"testing"
 	"time"
 )
@@ -214,7 +215,9 @@ func TestPxu_ReadDeviceStats(t *testing.T) {
 	}
 }
 
-func TestPxu_ReadDeviceInfo(t *testing.T) {
+func TestPxu_ReadInfo(t *testing.T) {
+
+	// TODO add tests for reading profile segments correctly
 	tests := []struct {
 		name         string
 		setupMock    func(*MockModbus)
@@ -246,20 +249,13 @@ func TestPxu_ReadDeviceInfo(t *testing.T) {
 				}
 			},
 		},
-		//{
-		//	name: "modbus read error",
-		//	setupMock: func(mock *MockModbus) {
-		//		mock.SimulateError(true, "device not responding")
-		//	},
-		//	expectError: true,
-		//},
 	}
-
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			mock := NewMockModbus()
-			tt.setupMock(mock)
-
+			if tt.setupMock != nil {
+				tt.setupMock(mock)
+			}
 			pxu, err := NewPxu(1, mock, time.Second, 1)
 			if err != nil {
 				t.Fatalf("failed to create PXU: %v", err)
@@ -291,78 +287,71 @@ func TestPxu_ReadDeviceInfo(t *testing.T) {
 	}
 }
 
-//func TestPxu_RetryLogic(t *testing.T) {
-//	mock := NewMockModbus()
-//
-//	// Set up mock to fail first 2 attempts, succeed on 3rd
-//	callCount := 0
-//	originalRead := mock.ReadRegisters
-//	mock.ReadRegisters = func(address, quantity uint16) ([]uint16, error) {
-//		callCount++
-//		if callCount < 3 {
-//			return nil, fmt.Errorf("simulated failure %d", callCount)
-//		}
-//		// Reset error state and call original
-//		mock.SimulateError(false, "")
-//		return originalRead(address, quantity)
-//	}
-//
-//	registers := make([]uint16, StatsRegCount)
-//	registers[RegLED] = LEDCelsius
-//	mock.SetRegisters(0, registers)
-//
-//	device, err := NewPxu(1, mock, time.Second, 3)
-//	if err != nil {
-//		t.Fatalf("failed to create PXU: %v", err)
-//	}
-//
-//	stats, err := device.ReadStats()
-//	if err != nil {
-//		t.Errorf("expected success after retries, got error: %v", err)
-//	}
-//
-//	if stats == nil {
-//		t.Error("expected non-nil stats after successful retry")
-//	}
-//
-//	if callCount != 3 {
-//		t.Errorf("expected 3 calls (2 failures + 1 success), got %d", callCount)
-//	}
-//}
-
 func TestPxu_ReadProfile(t *testing.T) {
-
-	// TODO add tests for reading profile segments correctly
 	tests := []struct {
 		name          string
 		profileNumber uint8
 		setupMock     func(*MockModbus)
 		expectError   bool
-		validateFunc  func(*testing.T, *Info)
+		validateFunc  func(*testing.T, *Profile)
 	}{
 		{
-			name:          "successful read",
-			profileNumber: 0,
+			name: "successful read",
 			setupMock: func(mock *MockModbus) {
-				// Simulate "PXU123" as hex values + firmware version
 				registers := []uint16{
-					0x5058, // "PX"
-					0x5531, // "U1"
-					0x3233, // "23"
-					0x0000, // padding
-					0x0000, // padding
-					0x0000, // padding
-					123,    // firmware 1.23
+					4, // 4 segments
 				}
-				mock.SetRegisters(RegInfoStart, registers)
+				mock.SetRegisters(RegNumSegmentsStart, registers)
+
+				// Simulate "PXU123" as hex values + firmware version
+				registers = []uint16{
+					250,  // 25.0C
+					7200, // 12 hr
+					305,  // 30.5C
+					3600, // 6 hr
+					620,  // 62.0C
+					7200, // 12 hr
+					720,  // 72C
+					9999, // 999.9 minutes
+				}
+
+				mock.SetRegisters(RegProfSegmentStart, registers)
 			},
 			expectError: false,
-			validateFunc: func(t *testing.T, info *Info) {
-				if info.Model == "" {
-					t.Error("expected non-empty model")
+			validateFunc: func(t *testing.T, profile *Profile) {
+				if profile.Id != 0 {
+					t.Errorf("expected profile with id '%d', got '%d'", profile.Id, 0)
 				}
-				if info.Firmware != "1.23" {
-					t.Errorf("expected firmware '1.23', got '%s'", info.Firmware)
+				if profile.SegCount == 0 || profile.Segments == nil {
+					t.Error("expected non-empty segments")
+				}
+				if len(profile.Segments) != int(profile.SegCount) {
+					t.Errorf("profile segment count mismatch, want '%d', got '%d'", profile.SegCount, len(profile.Segments))
+				}
+				var expected []Segment
+				expected = append(expected, Segment{
+					Pos: 0,
+					Sp:  250,
+					T:   7200,
+				})
+				expected = append(expected, Segment{
+					Pos: 1,
+					Sp:  305,
+					T:   3600,
+				})
+				expected = append(expected, Segment{
+					Pos: 2,
+					Sp:  620,
+					T:   7200,
+				})
+				expected = append(expected, Segment{
+					Pos: 3,
+					Sp:  720,
+					T:   9999,
+				})
+
+				if !reflect.DeepEqual(profile.Segments, expected) {
+					t.Errorf("profile segments mismatch, want '%v', got '%v'", expected, profile.Segments)
 				}
 			},
 		},
@@ -372,18 +361,20 @@ func TestPxu_ReadProfile(t *testing.T) {
 			expectError:   true,
 		},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			mock := NewMockModbus()
 			if tt.setupMock != nil {
 				tt.setupMock(mock)
 			}
+
 			pxu, err := NewPxu(1, mock, time.Second, 1)
 			if err != nil {
 				t.Fatalf("failed to create PXU: %v", err)
 			}
 
-			err = pxu.ReadProfile(tt.profileNumber)
+			profile, err := pxu.ReadProfile(tt.profileNumber)
 
 			if tt.expectError {
 				if err == nil {
@@ -397,14 +388,14 @@ func TestPxu_ReadProfile(t *testing.T) {
 				return
 			}
 
-			//if info == nil {
-			//	t.Error("expected non-nil info")
-			//	return
-			//}
-			//
-			//if tt.validateFunc != nil {
-			//	tt.validateFunc(t, info)
-			//}
+			if profile == nil {
+				t.Error("expected non-nil profile")
+				return
+			}
+
+			if tt.validateFunc != nil {
+				tt.validateFunc(t, profile)
+			}
 		})
 	}
 }
