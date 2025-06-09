@@ -133,6 +133,14 @@ func fillProfile(profile *Profile, regs []uint16) {
 	}
 }
 
-func (p *Pxu) WriteSp(value float64) error {
+func (p *Pxu) UpdateSetpoint(value float64) error {
 	return p.client.SetRegister(RegSP, toUint16(value))
+}
+
+func (p *Pxu) Stop() error {
+	return p.client.SetRegister(17, 0)
+}
+
+func (p *Pxu) Start() error {
+	return p.client.SetRegister(17, 1)
 }
