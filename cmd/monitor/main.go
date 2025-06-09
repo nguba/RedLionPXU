@@ -50,8 +50,12 @@ func main() {
 	}
 	fmt.Println(stats)
 
-	err = pxu.ReadProfile(0)
-	if err != nil {
-		log.Fatalf("Failed to read profile: %v", err)
+	for i := uint16(0); i < 16; i++ {
+		profile, err := pxu.ReadProfile(i)
+		if err != nil {
+			log.Fatalf("Failed to read profile: %v", err)
+		}
+		fmt.Println(profile)
 	}
+
 }

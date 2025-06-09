@@ -89,7 +89,7 @@ type Segment struct {
 }
 
 type Profile struct {
-	Id       uint8
+	Id       uint16
 	SegCount uint16
 	Segments []Segment
 }

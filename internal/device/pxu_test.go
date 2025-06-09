@@ -290,7 +290,7 @@ func TestPxu_ReadInfo(t *testing.T) {
 func TestPxu_ReadProfile(t *testing.T) {
 	tests := []struct {
 		name          string
-		profileNumber uint8
+		profileNumber uint16
 		setupMock     func(*MockModbus)
 		expectError   bool
 		validateFunc  func(*testing.T, *Profile)
