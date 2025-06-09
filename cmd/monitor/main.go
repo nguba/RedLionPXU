@@ -25,16 +25,16 @@ func main() {
 	}
 
 	// Create real client
-	client, err := device.NewPxuClient(cfg)
+	client, err := device.NewModbusHandler(cfg)
 	if err != nil {
-		log.Fatalf("Failed to create client: %v", err)
+		log.Fatalf("Failed to instantiate modbus handler: %v", err)
 	}
 	defer client.Close()
 
 	// Create PXU instance
 	pxu, err := device.NewPxu(uint8(*unitID), client, 3*time.Second, 30)
 	if err != nil {
-		log.Fatalf("Failed to create PXU: %v", err)
+		log.Fatalf("Failed to create controller: %v", err)
 	}
 	defer pxu.Close()
 
@@ -54,4 +54,6 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to read profile: %v", err)
 	}
+
+	fmt.Println(pxu.ReadProcessValue())
 }

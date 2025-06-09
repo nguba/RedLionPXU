@@ -94,10 +94,10 @@ func TestPxu_ReadDeviceStats(t *testing.T) {
 			setupMock: func(mock *MockModbus) {
 				// Set up register values for a successful read
 				registers := make([]uint16, StatsRegCount)
-				registers[StatsRegPV] = 250                   // 25.0°C
-				registers[StatsRegSP] = 300                   // 30.0°C
-				registers[StatsRegLED] = LEDCelsius | LEDOut1 // Celsius + Out1 active
-				registers[StatsRegRS] = uint16(RunStatusRun)
+				registers[RegPV] = 250                   // 25.0°C
+				registers[RegSP] = 300                   // 30.0°C
+				registers[RegLED] = LEDCelsius | LEDOut1 // Celsius + Out1 active
+				registers[RegRS] = uint16(RunStatusRun)
 
 				mock.SetRegisters(0, registers)
 			},
@@ -127,9 +127,9 @@ func TestPxu_ReadDeviceStats(t *testing.T) {
 			name: "successful read with fahrenheit",
 			setupMock: func(mock *MockModbus) {
 				registers := make([]uint16, StatsRegCount)
-				registers[StatsRegPV] = 770                      // 77.0°F
-				registers[StatsRegSP] = 860                      // 86.0°F
-				registers[StatsRegLED] = LEDFahrenheit | LEDOut2 // Fahrenheit + Out2 active
+				registers[RegPV] = 770                      // 77.0°F
+				registers[RegSP] = 860                      // 86.0°F
+				registers[RegLED] = LEDFahrenheit | LEDOut2 // Fahrenheit + Out2 active
 
 				mock.SetRegisters(0, registers)
 			},
@@ -170,7 +170,7 @@ func TestPxu_ReadDeviceStats(t *testing.T) {
 			name: "invalid temperature unit",
 			setupMock: func(mock *MockModbus) {
 				registers := make([]uint16, StatsRegCount)
-				registers[StatsRegLED] = 0 // No temperature unit bits set
+				registers[RegLED] = 0 // No temperature unit bits set
 
 				mock.SetRegisters(0, registers)
 			},
@@ -234,7 +234,7 @@ func TestPxu_ReadDeviceInfo(t *testing.T) {
 					0x0000, // padding
 					123,    // firmware 1.23
 				}
-				mock.SetRegisters(InfoRegStart, registers)
+				mock.SetRegisters(RegInfoStart, registers)
 			},
 			expectError: false,
 			validateFunc: func(t *testing.T, info *Info) {
@@ -308,7 +308,7 @@ func TestPxu_ReadDeviceInfo(t *testing.T) {
 //	}
 //
 //	registers := make([]uint16, StatsRegCount)
-//	registers[StatsRegLED] = LEDCelsius
+//	registers[RegLED] = LEDCelsius
 //	mock.SetRegisters(0, registers)
 //
 //	device, err := NewPxu(1, mock, time.Second, 3)
@@ -332,6 +332,7 @@ func TestPxu_ReadDeviceInfo(t *testing.T) {
 
 func TestPxu_ReadProfile(t *testing.T) {
 
+	// TODO add tests for reading profile segments correctly
 	tests := []struct {
 		name          string
 		profileNumber uint8
@@ -353,7 +354,7 @@ func TestPxu_ReadProfile(t *testing.T) {
 					0x0000, // padding
 					123,    // firmware 1.23
 				}
-				mock.SetRegisters(InfoRegStart, registers)
+				mock.SetRegisters(RegInfoStart, registers)
 			},
 			expectError: false,
 			validateFunc: func(t *testing.T, info *Info) {

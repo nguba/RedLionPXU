@@ -6,19 +6,19 @@ import (
 	"log"
 )
 
-// PxuClient wraps the modbus client
-type PxuClient struct {
+// ModbusHandler wraps the modbus client
+type ModbusHandler struct {
 	modbus *modbus.ModbusClient
 }
 
-func (c *PxuClient) SetUnitId(id uint8) error {
+func (c *ModbusHandler) SetUnitId(id uint8) error {
 	if c.modbus == nil {
 		return fmt.Errorf("modbus client is nil")
 	}
 	return c.modbus.SetUnitId(id)
 }
 
-func (c *PxuClient) ReadRegisters(address, quantity uint16) ([]uint16, error) {
+func (c *ModbusHandler) ReadRegisters(address, quantity uint16) ([]uint16, error) {
 	if c.modbus == nil {
 		return nil, fmt.Errorf("modbus client is nil")
 	}
@@ -29,15 +29,15 @@ func (c *PxuClient) ReadRegisters(address, quantity uint16) ([]uint16, error) {
 	return regs, err
 }
 
-func (c *PxuClient) Close() error {
+func (c *ModbusHandler) Close() error {
 	if c.modbus == nil {
 		return nil
 	}
 	return c.modbus.Close()
 }
 
-// NewPxuClient creates a new PXU client with the given configuration
-func NewPxuClient(cfg *Configuration) (*PxuClient, error) {
+// NewModbusHandler creates a new PXU client with the given configuration
+func NewModbusHandler(cfg *Configuration) (*ModbusHandler, error) {
 
 	modbusConfig := &modbus.ClientConfiguration{
 		URL:      cfg.URL,
@@ -56,5 +56,5 @@ func NewPxuClient(cfg *Configuration) (*PxuClient, error) {
 	if err != nil {
 		return nil, fmt.Errorf("error opening modbus connection: %w", err)
 	}
-	return &PxuClient{modbus: client}, nil
+	return &ModbusHandler{modbus: client}, nil
 }

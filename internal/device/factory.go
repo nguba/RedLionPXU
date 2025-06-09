@@ -20,7 +20,7 @@ func DefaultConfiguration() *Configuration {
 // NewDefaultPxu creates a PXU with default settings
 func NewDefaultPxu(unitId uint8) (*Pxu, error) {
 	cfg := DefaultConfiguration()
-	client, err := NewPxuClient(cfg)
+	client, err := NewModbusHandler(cfg)
 	if err != nil {
 		return nil, err
 	}
@@ -29,7 +29,7 @@ func NewDefaultPxu(unitId uint8) (*Pxu, error) {
 }
 
 func NewStats(regs []uint16) (*Stats, error) {
-	ledStatus := regs[StatsRegLED]
+	ledStatus := regs[RegLED]
 
 	unit, err := parseTemperatureUnit(ledStatus)
 	if err != nil {
@@ -37,20 +37,20 @@ func NewStats(regs []uint16) (*Stats, error) {
 	}
 
 	return &Stats{
-		Pv:     toFloat(regs[StatsRegPV]),
-		Sp:     toFloat(regs[StatsRegSP]),
+		Pv:     toFloat(regs[RegPV]),
+		Sp:     toFloat(regs[RegSP]),
 		Out1:   ledStatus&LEDOut1 != 0,
 		Out2:   ledStatus&LEDOut2 != 0,
 		At:     ledStatus&LEDAt != 0,
-		TP:     toFloat(regs[StatsRegTP]),
-		TI:     regs[StatsRegTI],
-		TD:     regs[StatsRegTD],
-		TGroup: regs[StatsRegTGroup],
-		RS:     RunStatus(regs[StatsRegRS]),
+		TP:     toFloat(regs[RegTP]),
+		TI:     regs[RegTI],
+		TD:     regs[RegTD],
+		TGroup: regs[RegTGroup],
+		RS:     RunStatus(regs[RegRS]),
 		VUnit:  unit,
-		PC:     regs[StatsRegPC],
-		PS:     regs[StatsRegPS],
-		PSR:    toFloat(regs[StatsRegPSR]),
+		PC:     regs[RegPC],
+		PS:     regs[RegPS],
+		PSR:    toFloat(regs[RegPSR]),
 	}, nil
 }
 

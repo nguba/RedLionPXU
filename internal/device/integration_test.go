@@ -17,17 +17,17 @@ func TestIntegration_StatsWorkflow(t *testing.T) {
 
 	// Configure device stats registers
 	statsRegs := make([]uint16, StatsRegCount)
-	statsRegs[StatsRegPV] = 235   // 23.5°C
-	statsRegs[StatsRegSP] = 250   // 25.0°C
-	statsRegs[StatsRegTP] = 180   // 18.0°C
-	statsRegs[StatsRegTI] = 120   // TI value
-	statsRegs[StatsRegTD] = 30    // TD value
-	statsRegs[StatsRegTGroup] = 1 // Temperature group
-	statsRegs[StatsRegRS] = uint16(RunStatusRun)
-	statsRegs[StatsRegLED] = LEDCelsius | LEDOut1 | LEDAt
-	statsRegs[StatsRegPC] = 85  // PC value
-	statsRegs[StatsRegPS] = 100 // PS value
-	statsRegs[StatsRegPSR] = 95 // 9.5 PSR value
+	statsRegs[RegPV] = 235   // 23.5°C
+	statsRegs[RegSP] = 250   // 25.0°C
+	statsRegs[RegTP] = 180   // 18.0°C
+	statsRegs[RegTI] = 120   // TI value
+	statsRegs[RegTD] = 30    // TD value
+	statsRegs[RegTGroup] = 1 // Temperature group
+	statsRegs[RegRS] = uint16(RunStatusRun)
+	statsRegs[RegLED] = LEDCelsius | LEDOut1 | LEDAt
+	statsRegs[RegPC] = 85  // PC value
+	statsRegs[RegPS] = 100 // PS value
+	statsRegs[RegPSR] = 95 // 9.5 PSR value
 
 	mock.SetRegisters(0, statsRegs)
 
@@ -39,7 +39,7 @@ func TestIntegration_StatsWorkflow(t *testing.T) {
 		0x0000, 0x0000, 0x0000, // padding
 		125, // firmware 1.25
 	}
-	mock.SetRegisters(InfoRegStart, infoRegs)
+	mock.SetRegisters(RegInfoStart, infoRegs)
 
 	// Create PXU instance
 	pxu, err := NewPxu(6, mock, 2*time.Second, 3)
@@ -115,7 +115,7 @@ func BenchmarkPxu_ReadStats(b *testing.B) {
 
 	// Set up realistic register data
 	statsRegs := make([]uint16, StatsRegCount)
-	statsRegs[StatsRegLED] = LEDCelsius
+	statsRegs[RegLED] = LEDCelsius
 	mock.SetRegisters(0, statsRegs)
 
 	pxu, err := NewPxu(1, mock, time.Second, 1)
@@ -139,10 +139,10 @@ func ExamplePxu_ReadStats() {
 
 	// Set up some sample data
 	registers := make([]uint16, StatsRegCount)
-	registers[StatsRegPV] = 235 // 23.5°C
-	registers[StatsRegSP] = 250 // 25.0°C
-	registers[StatsRegLED] = LEDCelsius | LEDOut1
-	registers[StatsRegRS] = uint16(RunStatusRun)
+	registers[RegPV] = 235 // 23.5°C
+	registers[RegSP] = 250 // 25.0°C
+	registers[RegLED] = LEDCelsius | LEDOut1
+	registers[RegRS] = uint16(RunStatusRun)
 	mock.SetRegisters(0, registers)
 
 	// Create PXU instance

@@ -27,11 +27,10 @@ func NewPxu(unitId uint8, client Modbus, timeout time.Duration, retries int) (*P
 		retries = DefaultRetries
 	}
 
+	log.Printf("connecting to unit %d", unitId)
 	if err := client.SetUnitId(unitId); err != nil {
 		return nil, fmt.Errorf("failed to set unit ID %d: %w", unitId, err)
 	}
-
-	log.Printf("connected to unit %d", unitId)
 
 	controller := &Pxu{
 		client:  client,
@@ -86,9 +85,9 @@ func (p *Pxu) ReadStats() (*Stats, error) {
 }
 
 func (p *Pxu) ReadInfo() (*Info, error) {
-	regs, err := p.readRegistersWithRetry(InfoRegStart, InfoRegCount)
+	regs, err := p.readRegistersWithRetry(RegInfoStart, InfoRegCount)
 	if err != nil {
-		return nil, fmt.Errorf("failed reading info registers from unit %d: %w", p.unitId, err)
+		return nil, fmt.Errorf("failed reading registers from unit %d: %w", p.unitId, err)
 	}
 
 	if len(regs) < InfoRegCount {
@@ -106,14 +105,14 @@ func (p *Pxu) ReadProfile(number uint8) error {
 	profile := Profile{Num: number}
 
 	// read the number of segments this profile spans
-	segReg, err := p.readRegistersWithRetry(ProfNumSegmentsRegStart, 1)
+	segReg, err := p.readRegistersWithRetry(RegNumSegmentsStart, 1)
 	if err != nil {
-		return fmt.Errorf("failed reading profile segment count from unit %d: %w", p.unitId, err)
+		return fmt.Errorf("failed reading registers from unit %d: %w", p.unitId, err)
 	}
 	// this is how many segments are configured in this profile.
 	profile.SegCount = segReg[0]
 
-	reg, err := p.readRegistersWithRetry(ProfSegmentRegStart, profile.SegCount*2)
+	reg, err := p.readRegistersWithRetry(RegProfSegmentStart, profile.SegCount*2)
 	if err != nil {
 		return fmt.Errorf("failed reading profile from unit %d: %w", p.unitId, err)
 	}
