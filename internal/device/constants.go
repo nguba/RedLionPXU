@@ -32,7 +32,7 @@ const (
 	RegProfEBT              = 1091
 	RegProfIRR              = 1092
 	RegProfSegmentStart     = 1100
-	RegProfSegmentCount     = 32 // setpoint -> odd num, time -> even num
+	RegProfSegmentCount     = 32 // setpoint -> even idx, time -> odd idx
 	RegNumSegmentsStart     = 1630
 	RegNumSegmentsCount     = 15
 	RegProfCycleRepeatStart = 1650
