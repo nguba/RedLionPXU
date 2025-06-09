@@ -4,6 +4,7 @@ package device
 type Modbus interface {
 	SetUnitId(id uint8) error
 	ReadRegisters(address, quantity uint16) ([]uint16, error)
+	SetRegister(address uint16, regs uint16) error
 	Close() error
 }
 
@@ -13,4 +14,8 @@ type PxuReader interface {
 	ReadInfo() (*Info, error)
 	ReadProfile() error
 	Close() error
+}
+
+type PxuWriter interface {
+	WriteSp(value uint16) error
 }

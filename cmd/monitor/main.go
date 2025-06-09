@@ -57,4 +57,9 @@ func main() {
 		}
 		fmt.Println(profile)
 	}
+
+	if err := pxu.WriteSp(10.7); err != nil {
+		log.Fatalf("Failed to write Sp: %v", err)
+	}
+
 }

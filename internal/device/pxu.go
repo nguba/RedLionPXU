@@ -132,3 +132,7 @@ func fillProfile(profile *Profile, regs []uint16) {
 		profile.Segments = append(profile.Segments, seg)
 	}
 }
+
+func (p *Pxu) WriteSp(value float64) error {
+	return p.client.SetRegister(RegSP, toUint16(value))
+}

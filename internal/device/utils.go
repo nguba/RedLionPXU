@@ -3,6 +3,7 @@ package device
 import (
 	"encoding/hex"
 	"fmt"
+	"math"
 )
 
 func makeProfile(regs []uint16) string {
@@ -17,6 +18,13 @@ func makeProfile(regs []uint16) string {
 
 func toFloat(r uint16) float64 {
 	return float64(r) / 10
+}
+
+func toUint16(r float64) uint16 {
+	scaled := r * 10.0
+	truncated := math.Floor(scaled)
+
+	return uint16(truncated)
 }
 
 func toString(input uint16) string {

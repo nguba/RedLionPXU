@@ -58,3 +58,16 @@ func NewModbusHandler(cfg *Configuration) (*ModbusHandler, error) {
 	}
 	return &ModbusHandler{modbus: client}, nil
 }
+
+func (c *ModbusHandler) SetRegister(address, value uint16) error {
+	if c.modbus == nil {
+		return fmt.Errorf("modbus client is nil")
+	}
+
+	err := c.modbus.WriteRegister(address, value)
+	if err != nil {
+		return fmt.Errorf("error writing registersers addr=%d, value:%d: %v", address, value, err)
+	}
+
+	return nil
+}
