@@ -83,13 +83,28 @@ type Configuration struct {
 }
 
 type Segment struct {
-	Pos uint8
-	Sp  uint16
-	T   uint16
+	Id uint8
+	Sp float64
+	T  float64
+}
+
+func (s Segment) String() string {
+	return fmt.Sprintf("Id: %d, Sp: %.1f, T: %.1f", s.Id, s.Sp, s.T)
 }
 
 type Profile struct {
 	Id       uint16
 	SegCount uint16
 	Segments []Segment
+}
+
+func (p Profile) String() string {
+	return fmt.Sprintf("Id: %d, SegCount: %d, Segments: %+v", p.Id, p.SegCount, p.Segments)
+}
+
+func NewProfile(id uint16, segReg []uint16) *Profile {
+	profile := Profile{Id: id}
+	// this is how many segments are configured in this profile.
+	profile.SegCount = segReg[0] + 1
+	return &profile
 }

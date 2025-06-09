@@ -102,31 +102,35 @@ func (p *Pxu) ReadProfile(id uint16) (*Profile, error) {
 		return nil, fmt.Errorf("invalid profile id selected: %d", id)
 	}
 
-	profile := Profile{Id: id}
-
 	// read the number of segments this profile spans
 	segReg, err := p.readRegistersWithRetry(RegNumSegmentsStart+id, 1)
 	if err != nil {
 		return nil, fmt.Errorf("failed reading registers from unit %d: %w", p.unitId, err)
 	}
-	// this is how many segments are configured in this profile.
-	profile.SegCount = segReg[0] + 1
-
+	profile := NewProfile(id, segReg)
 	offset := id * 32
-	reg, err := p.readRegistersWithRetry(RegProfSegmentStart+offset, profile.SegCount*2)
+	regs, err := p.readRegistersWithRetry(RegProfSegmentStart+offset, profile.SegCount*2)
 	if err != nil {
 		return nil, fmt.Errorf("failed reading profile from unit %d: %w", p.unitId, err)
 	}
 
+	// TODO read cycle repeat
+
+	// TODO read link profile
+
+	fillProfile(profile, regs)
+	return profile, nil
+}
+
+func fillProfile(profile *Profile, regs []uint16) {
 	var Sp uint16 = 0
 	for i, l := uint16(0), profile.SegCount; i < l; i++ {
 		seg := Segment{
-			Pos: uint8(i),
-			Sp:  reg[Sp],
-			T:   reg[Sp+1],
+			Id: uint8(i),
+			Sp: toFloat(regs[Sp]),
+			T:  toFloat(regs[Sp+1]),
 		}
 		profile.Segments = append(profile.Segments, seg)
 		Sp += 2
 	}
-	return &profile, nil
 }
