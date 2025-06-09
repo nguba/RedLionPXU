@@ -123,14 +123,12 @@ func (p *Pxu) ReadProfile(id uint16) (*Profile, error) {
 }
 
 func fillProfile(profile *Profile, regs []uint16) {
-	var Sp uint16 = 0
-	for i, l := uint16(0), profile.SegCount; i < l; i++ {
+	for i, l := uint16(0), profile.SegCount; i < l; i += 2 {
 		seg := Segment{
 			Id: uint8(i),
-			Sp: toFloat(regs[Sp]),
-			T:  toFloat(regs[Sp+1]),
+			Sp: toFloat(regs[i]),
+			T:  toFloat(regs[i+1]),
 		}
 		profile.Segments = append(profile.Segments, seg)
-		Sp += 2
 	}
 }
