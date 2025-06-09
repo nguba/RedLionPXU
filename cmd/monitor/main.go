@@ -54,6 +54,4 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to read profile: %v", err)
 	}
-
-	fmt.Println(pxu.ReadProcessValue())
 }
