@@ -1,0 +1,162 @@
+{
+  "profiles": [
+    {
+      "id": 0,
+      "profile_name": "PXU Profile 0: Primary Fermentation",
+      "link_to_next_profile": 1,
+      "segments": [
+        {
+          "id": 0,
+          "setpoint": 12.0,
+          "time": 960.0,
+          "notes": "Initial fermentation temperature for first 16 hours (Part 1/3)."
+        },
+        {
+          "id": 1,
+          "setpoint": 12.0,
+          "time": 960.0,
+          "notes": "Initial fermentation temperature for next 16 hours (Part 2/3)."
+        },
+        {
+          "id": 2,
+          "setpoint": 12.0,
+          "time": 960.0,
+          "notes": "Initial fermentation temperature for final 16 hours (Part 3/3). Total 48 hours (2 days) at 12C."
+        },
+        {
+          "id": 3,
+          "setpoint": 13.0,
+          "time": 720.0,
+          "notes": "Gradual ramp up towards main fermentation temperature (Part 1/2 of 24h ramp)."
+        },
+        {
+          "id": 4,
+          "setpoint": 14.0,
+          "time": 720.0,
+          "notes": "Gradual ramp up to main fermentation temperature (Part 2/2 of 24h ramp). Total 24 hours (1 day) ramp."
+        },
+        {
+          "id": 5,
+          "setpoint": 14.0,
+          "time": 900.0,
+          "notes": "Main fermentation temperature hold (Part 1/8 for 5 days)."
+        },
+        {
+          "id": 6,
+          "setpoint": 14.0,
+          "time": 900.0,
+          "notes": "Main fermentation temperature hold (Part 2/8)."
+        },
+        {
+          "id": 7,
+          "setpoint": 14.0,
+          "time": 900.0,
+          "notes": "Main fermentation temperature hold (Part 3/8)."
+        },
+        {
+          "id": 8,
+          "setpoint": 14.0,
+          "time": 900.0,
+          "notes": "Main fermentation temperature hold (Part 4/8)."
+        },
+        {
+          "id": 9,
+          "setpoint": 14.0,
+          "time": 900.0,
+          "notes": "Main fermentation temperature hold (Part 5/8)."
+        },
+        {
+          "id": 10,
+          "setpoint": 14.0,
+          "time": 900.0,
+          "notes": "Main fermentation temperature hold (Part 6/8)."
+        },
+        {
+          "id": 11,
+          "setpoint": 14.0,
+          "time": 900.0,
+          "notes": "Main fermentation temperature hold (Part 7/8)."
+        },
+        {
+          "id": 12,
+          "setpoint": 14.0,
+          "time": 900.0,
+          "notes": "Main fermentation temperature hold (Part 8/8). Total 120 hours (5 days) at 14C."
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "profile_name": "PXU Profile 1: Diacetyl Rest and Cold Crash for Cellar Transfer",
+      "link_to_next_profile": -1,
+      "segments": [
+        {
+          "id": 0,
+          "setpoint": 16.0,
+          "time": 30.0,
+          "notes": "Ramp Up for Diacetyl Rest (if not already at 16°C). Increases temperature from 14°C to 16°C."
+        },
+        {
+          "id": 1,
+          "setpoint": 16.0,
+          "time": 720.0,
+          "notes": "Diacetyl Rest Hold 1: Maintain 16°C. Crucial to confirm absence of diacetyl through sensory/forced diacetyl test before proceeding. This 12-hour segment is a common starting point."
+        },
+        {
+          "id": 2,
+          "setpoint": 16.0,
+          "time": 720.0,
+          "notes": "Diacetyl Rest Hold 2 (Optional/Continuation): Continue holding at 16°C if diacetyl is still present. Only proceed to cooling once test confirms clean beer."
+        },
+        {
+          "id": 3,
+          "setpoint": 14.0,
+          "time": 120.0,
+          "notes": "Cool Down Stage 1: Begin gradual temperature reduction from 16°C to 14°C. Slow changes help prevent shocking the yeast and facilitate controlled settlement."
+        },
+        {
+          "id": 4,
+          "setpoint": 12.0,
+          "time": 120.0,
+          "notes": "Cool Down Stage 2: Continue cooling from 14°C to 12°C."
+        },
+        {
+          "id": 5,
+          "setpoint": 10.0,
+          "time": 120.0,
+          "notes": "Cool Down Stage 3: Continue cooling from 12°C to 10°C."
+        },
+        {
+          "id": 6,
+          "setpoint": 8.0,
+          "time": 120.0,
+          "notes": "Cool Down Stage 4: Continue cooling from 10°C to 8°C."
+        },
+        {
+          "id": 7,
+          "setpoint": 6.0,
+          "time": 120.0,
+          "notes": "Cool Down Stage 5: Continue cooling from 8°C to 6°C. This brings you into the upper end of your desired transfer range."
+        },
+        {
+          "id": 8,
+          "setpoint": 5.0,
+          "time": 60.0,
+          "notes": "Target Temperature Achieved: Drop the final degree to 5°C. This is your target temperature for transfer or further cold conditioning."
+        },
+        {
+          "id": 9,
+          "setpoint": 5.0,
+          "time": 720.0,
+          "notes": "Cold Conditioning / Transfer Hold 1: Hold at 5°C. This period allows yeast and other particulates to settle out for clarity and stability before transfer. The beer is ready to be transferred to your lagering vessel from this point onward."
+        },
+        {
+          "id": 10,
+          "setpoint": 5.0,
+          "time": 720.0,
+          "notes": "Cold Conditioning / Transfer Hold 2: Continue holding at 5°C. The longer you cold condition, the clearer the beer will become and the more it will mellow. Continue as needed until transfer."
+        }
+      ]
+    }
+  ]
+}
