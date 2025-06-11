@@ -46,7 +46,7 @@ func NewStats(regs []uint16) (*Stats, error) {
 		TI:     regs[RegTI],
 		TD:     regs[RegTD],
 		TGroup: regs[RegTGroup],
-		RS:     RunStatus(regs[RegRS]),
+		RS:     RunStatus(regs[RegControllerStatus]),
 		VUnit:  unit,
 		PC:     regs[RegPC],
 		PS:     regs[RegPS],

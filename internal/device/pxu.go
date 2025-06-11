@@ -103,11 +103,18 @@ func (p *Pxu) ReadProfile(id uint16) (*Profile, error) {
 	}
 
 	// read the number of segments this profile spans
-	segReg, err := p.readRegistersWithRetry(RegNumSegmentsStart+id, 1)
+	segmentCount, err := p.readRegistersWithRetry(RegNumSegmentsStart+id, 1)
 	if err != nil {
-		return nil, fmt.Errorf("failed reading registers from unit %d: %w", p.unitId, err)
+		return nil, fmt.Errorf("failed reading segment count from unit %d: %w", p.unitId, err)
 	}
-	profile := NewProfile(id, segReg)
+
+	linkProfile, err := p.readRegistersWithRetry(RegLinkProfile+id, 1)
+	if err != nil {
+		return nil, fmt.Errorf("failed reading linked profile from unit %d: %w", p.unitId, err)
+	}
+
+	profile := NewProfile(id, segmentCount[0]+1, linkProfile[0])
+
 	offset := id * 32
 	regs, err := p.readRegistersWithRetry(RegProfSegmentStart+offset, profile.SegCount*2)
 	if err != nil {
@@ -143,7 +150,7 @@ func (p *Pxu) UpdateSetpoint(value float64) error {
 }
 
 func (p *Pxu) Stop() error {
-	err := p.client.SetRegister(17, 0)
+	err := p.client.SetRegister(RegControllerStatus, RsStop)
 	if err != nil {
 		return fmt.Errorf("failed to stop unit %d: %w", p.unitId, err)
 	}
@@ -152,7 +159,7 @@ func (p *Pxu) Stop() error {
 }
 
 func (p *Pxu) Start() error {
-	err := p.client.SetRegister(17, 1)
+	err := p.client.SetRegister(RegControllerStatus, RsStart)
 	if err != nil {
 		return fmt.Errorf("failed to stop unit %d: %w", p.unitId, err)
 	}

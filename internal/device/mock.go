@@ -34,6 +34,18 @@ func (m *MockModbus) SetUnitId(id uint8) error {
 	return nil
 }
 
+func (m *MockModbus) ReadRegister(address uint16) (uint16, error) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+
+	if m.shouldError {
+		return ErrVal, fmt.Errorf("ReadRegister: %s", m.errorMessage)
+	}
+	if val, exists := m.registers[address]; exists {
+		return val, nil
+	}
+	return ErrVal, nil
+}
 func (m *MockModbus) ReadRegisters(address, quantity uint16) ([]uint16, error) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
@@ -62,19 +74,23 @@ func (m *MockModbus) Close() error {
 }
 
 // SetRegister sets a register value for testing
-func (m *MockModbus) SetRegister(address uint16, value uint16) {
+func (m *MockModbus) SetRegister(address uint16, value uint16) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 	m.registers[address] = value
+
+	return nil
 }
 
 // SetRegisters sets multiple register values
-func (m *MockModbus) SetRegisters(startAddr uint16, values []uint16) {
+func (m *MockModbus) SetRegisters(startAddr uint16, values []uint16) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 	for i, val := range values {
 		m.registers[startAddr+uint16(i)] = val
 	}
+
+	return nil
 }
 
 // SimulateError configures the mock to return errors

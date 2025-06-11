@@ -1,6 +1,7 @@
 package device
 
 import (
+	"errors"
 	"fmt"
 	"github.com/simonvetter/modbus"
 	"log"
@@ -70,4 +71,21 @@ func (c *ModbusHandler) SetRegister(address, value uint16) error {
 	}
 
 	return nil
+}
+
+func (m *ModbusHandler) SetRegisters(startAddr uint16, values []uint16) error {
+	return errors.New("not implemented")
+}
+
+func (c *ModbusHandler) ReadRegister(address uint16) (uint16, error) {
+	if c.modbus == nil {
+		return ErrVal, fmt.Errorf("modbus client is nil")
+	}
+
+	val, err := c.modbus.ReadRegister(address, modbus.HOLDING_REGISTER)
+	if err != nil {
+		return ErrVal, fmt.Errorf("error reading registerser addr=%d: %w", address, err)
+	}
+
+	return val, nil
 }

@@ -4,17 +4,17 @@ import "time"
 
 // General Register addresses
 const (
-	RegPV     = 0  // Process Value
-	RegSP     = 1  // Active Setpoint
-	RegTP     = 10 // Proportional Band
-	RegTI     = 11 // Integral Time
-	RegTD     = 12 // Derivative Time
-	RegTGroup = 14 // Parameter Set Selection
-	RegRS     = 17 // Controller Status
-	RegLED    = 20 // LED Status
-	RegPC     = 25 // Current Profile
-	RegPS     = 26 // Current Profile Segment
-	RegPSR    = 27 // Profile Segment Remaining Time
+	RegPV               = 0  // Process Value
+	RegSP               = 1  // Active Setpoint
+	RegTP               = 10 // Proportional Band
+	RegTI               = 11 // Integral Time
+	RegTD               = 12 // Derivative Time
+	RegTGroup           = 14 // Parameter Set Selection
+	RegControllerStatus = 17 // Controller Status
+	RegLED              = 20 // LED Status
+	RegPC               = 25 // Current Profile
+	RegPS               = 26 // Current Profile Segment
+	RegPSR              = 27 // Profile Segment Remaining Time
 
 	StatsRegCount = 30
 )
@@ -34,14 +34,13 @@ const (
 	RegProfSegmentStart     = 1100
 	RegProfSegmentCount     = 32 // setpoint -> even idx, time -> odd idx
 	RegNumSegmentsStart     = 1630
+	RegLinkProfile          = 1670
 	RegNumSegmentsCount     = 15
 	RegProfCycleRepeatStart = 1650
 	RegProfCycleRepeatCount = 15
 	RegProfLink             = 1670
 	RegProfLinkCount        = 15
 )
-
-const ()
 
 // LED status bit masks
 const (
@@ -52,9 +51,25 @@ const (
 	LEDFahrenheit uint16 = 1 << 2 // Display Units are in Fahrenheit
 )
 
+// Controller status
+const (
+	RsStop = iota
+	RsStart
+	RsEnd     // profile mode
+	RsPause   // profile mode
+	RsAdvance // profile mode
+)
+
+// Link profile
+const (
+	LinkStop = 17
+	LinkEnd  = 16
+)
+
 // Default configuration values
 const (
 	DefaultTimeout = 5 * time.Second
 	DefaultRetries = 3
 	DefaultSpeed   = 38400
+	ErrVal         = 10000
 )

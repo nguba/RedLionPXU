@@ -95,16 +95,26 @@ func (s Segment) String() string {
 type Profile struct {
 	Id       uint16
 	SegCount uint16
+	link     uint16
 	Segments []Segment
 }
 
 func (p Profile) String() string {
-	return fmt.Sprintf("Id: %d, SegCount: %d, Segments: %+v", p.Id, p.SegCount, p.Segments)
+	var linkVal string
+	if p.link == LinkEnd {
+		linkVal = "END"
+	} else if p.link == LinkStop {
+		linkVal = "STOP"
+	} else {
+		linkVal = fmt.Sprintf("PROFILE %d", p.link)
+	}
+	return fmt.Sprintf("Id: %d, SegCount: %d, link: %s, Segments: %+v", p.Id, p.SegCount, linkVal, p.Segments)
 }
 
-func NewProfile(id uint16, segReg []uint16) *Profile {
+func NewProfile(id uint16, segmentCount uint16, linkProfile uint16) *Profile {
 	profile := Profile{Id: id}
 	// this is how many segments are configured in this profile.
-	profile.SegCount = segReg[0] + 1
+	profile.SegCount = segmentCount
+	profile.link = linkProfile
 	return &profile
 }

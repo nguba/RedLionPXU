@@ -98,7 +98,7 @@ func TestPxu_ReadDeviceStats(t *testing.T) {
 				registers[RegPV] = 250                   // 25.0°C
 				registers[RegSP] = 300                   // 30.0°C
 				registers[RegLED] = LEDCelsius | LEDOut1 // Celsius + Out1 active
-				registers[RegRS] = uint16(RunStatusRun)
+				registers[RegControllerStatus] = uint16(RunStatusRun)
 
 				mock.SetRegisters(0, registers)
 			},
@@ -395,6 +395,60 @@ func TestPxu_ReadProfile(t *testing.T) {
 
 			if tt.validateFunc != nil {
 				tt.validateFunc(t, profile)
+			}
+		})
+	}
+}
+
+func TestPxu_Start(t *testing.T) {
+	tests := []struct {
+		name         string
+		setupMock    func(*MockModbus)
+		expectError  bool
+		validateFunc func(*testing.T, *Profile)
+	}{
+		{
+			name: "start temperature control",
+			setupMock: func(mock *MockModbus) {
+				_ = mock.SetRegister(RegControllerStatus, RsStop)
+			},
+			expectError: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			mock := NewMockModbus()
+			if tt.setupMock != nil {
+				tt.setupMock(mock)
+			}
+
+			pxu, err := NewPxu(1, mock, time.Second, 1)
+			if err != nil {
+				t.Fatalf("failed to create PXU: %v", err)
+			}
+
+			val, err := mock.ReadRegister(RegControllerStatus)
+
+			if err != nil {
+				t.Fatalf("failed to read register: %v", err)
+			}
+			if val != RsStop {
+				t.Errorf("expected value '%d', got '%d'", RsStop, val)
+			}
+
+			err = pxu.Start()
+
+			if tt.expectError {
+				if err == nil {
+					t.Error("expected error but got none")
+				}
+				return
+			}
+
+			if err != nil {
+				t.Errorf("unexpected error: %v", err)
+				return
 			}
 		})
 	}
