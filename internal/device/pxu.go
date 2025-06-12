@@ -156,9 +156,16 @@ func (p *Pxu) UpdateSetpoint(value float64) error {
 	return nil
 }
 
-func (p *Pxu) Stop() error {
-	err := p.client.SetRegister(RegControllerStatus, RsStop)
+func (p *Pxu) UpdateControllerStatus(value uint16) error {
+	err := p.client.SetRegister(RegControllerStatus, value)
 	if err != nil {
+		return fmt.Errorf("failed to update controller status on unit %d: %w", p.unitId, err)
+	}
+	return nil
+}
+
+func (p *Pxu) Stop() error {
+	if err := p.UpdateControllerStatus(RsStop); err != nil {
 		return fmt.Errorf("failed to stop unit %d: %w", p.unitId, err)
 	}
 	log.Printf("stopped unit %d", p.unitId)
@@ -166,9 +173,8 @@ func (p *Pxu) Stop() error {
 }
 
 func (p *Pxu) Start() error {
-	err := p.client.SetRegister(RegControllerStatus, RsStart)
-	if err != nil {
-		return fmt.Errorf("failed to stop unit %d: %w", p.unitId, err)
+	if err := p.UpdateControllerStatus(RsStart); err != nil {
+		return fmt.Errorf("failed to start unit %d: %w", p.unitId, err)
 	}
 	log.Printf("started unit %d", p.unitId)
 	return nil
