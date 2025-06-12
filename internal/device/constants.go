@@ -28,18 +28,13 @@ const (
 
 // Profile registers
 const (
-	RegProfDEV              = 1090
-	RegProfEBT              = 1091
-	RegProfIRR              = 1092
-	RegProfSegmentStart     = 1100
-	RegProfSegmentCount     = 32 // setpoint -> even idx, time -> odd idx
-	RegNumSegmentsStart     = 1630
-	RegLinkProfile          = 1670
-	RegNumSegmentsCount     = 15
-	RegProfCycleRepeatStart = 1650
-	RegProfCycleRepeatCount = 15
-	RegProfLink             = 1670
-	RegProfLinkCount        = 15
+	RegProfDEV          = 1090
+	RegProfEBT          = 1091
+	RegProfIRR          = 1092
+	RegProfSegmentStart = 1100
+	RegNumSegments      = 1630
+	RegProfCycleRepeat  = 1650
+	RegProfLink         = 1670
 )
 
 // LED status bit masks

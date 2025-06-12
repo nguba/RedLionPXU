@@ -103,33 +103,39 @@ func (p *Pxu) ReadProfile(id uint16) (*Profile, error) {
 	}
 
 	// read the number of segments this profile spans
-	segmentCount, err := p.readRegistersWithRetry(RegNumSegmentsStart+id, 1)
+	segmentCount, err := p.readRegistersWithRetry(RegNumSegments+id, 1)
 	if err != nil {
-		return nil, fmt.Errorf("failed reading segment count from unit %d: %w", p.unitId, err)
+		return nil, fmt.Errorf("failed reading profile segment count from unit %d: %w", p.unitId, err)
 	}
 
-	linkProfile, err := p.readRegistersWithRetry(RegLinkProfile+id, 1)
+	// read whether the profile stops, ends or continues with another one
+	linkProfile, err := p.readRegistersWithRetry(RegProfLink+id, 1)
 	if err != nil {
 		return nil, fmt.Errorf("failed reading linked profile from unit %d: %w", p.unitId, err)
 	}
 
-	profile := NewProfile(id, segmentCount[0], linkProfile[0])
+	// read how often the profile repeats
+	repeatCycle, err := p.readRegistersWithRetry(RegProfCycleRepeat+id, 1)
+	if err != nil {
+		return nil, fmt.Errorf("failed reading profile cycle count from unit %d: %w", p.unitId, err)
+	}
 
-	offset := id * 32
-	regs, err := p.readRegistersWithRetry(RegProfSegmentStart+offset, profile.SegCount*2)
+	sc := segmentCount[0] + 1 // count of zero actually means one segment only
+	profile := NewProfile(id, sc, linkProfile[0], repeatCycle[0])
+
+	start := id*32 + RegProfSegmentStart
+	count := profile.SegCount * 2
+	regs, err := p.readRegistersWithRetry(start, count)
 	if err != nil {
 		return nil, fmt.Errorf("failed reading profile from unit %d: %w", p.unitId, err)
 	}
-
-	// TODO read cycle repeat
-
-	// TODO read link profile
 
 	fillProfile(profile, regs)
 	return profile, nil
 }
 
 func fillProfile(profile *Profile, regs []uint16) {
+	// setpoint -> even idx, time -> odd idx
 	for i := uint16(0); i < profile.SegCount; i++ {
 		p := i * 2
 		seg := Segment{

@@ -97,6 +97,7 @@ type Profile struct {
 	SegCount uint16
 	link     uint16
 	Segments []Segment
+	repeat   uint16
 }
 
 func (p Profile) String() string {
@@ -108,13 +109,14 @@ func (p Profile) String() string {
 	} else {
 		linkVal = fmt.Sprintf("PROFILE %d", p.link)
 	}
-	return fmt.Sprintf("Id: %d, SegCount: %d, link: %s, Segments: %+v", p.Id, p.SegCount, linkVal, p.Segments)
+	return fmt.Sprintf("Id: %d, SegCount: %d, Link: %s, Repeat: %d, Segments: %+v",
+		p.Id, p.SegCount, linkVal, p.repeat, p.Segments)
 }
 
-func NewProfile(id uint16, segmentCount uint16, linkProfile uint16) *Profile {
+func NewProfile(id uint16, segmentCount, linkProfile, repeatCycle uint16) *Profile {
 	profile := Profile{Id: id}
-	// this is how many segments are configured in this profile.
-	profile.SegCount = segmentCount
-	profile.link = linkProfile
+	profile.SegCount = segmentCount // configured active segments
+	profile.link = linkProfile      // profile to continue with, END or STOP
+	profile.repeat = repeatCycle    // whether this profile repeats and how often (0 = no repeat)
 	return &profile
 }

@@ -299,9 +299,9 @@ func TestPxu_ReadProfile(t *testing.T) {
 			name: "successful read",
 			setupMock: func(mock *MockModbus) {
 				registers := []uint16{
-					4, // 4 segments
+					4 - 1, // 4 segment count starts at zero
 				}
-				mock.SetRegisters(RegNumSegmentsStart, registers)
+				mock.SetRegisters(RegNumSegments, registers)
 
 				// Simulate "PXU123" as hex values + firmware version
 				registers = []uint16{
