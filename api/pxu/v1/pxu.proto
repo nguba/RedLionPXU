@@ -1,0 +1,63 @@
+syntax = "proto3";
+
+package redlionpxu.v1;
+
+option go_package = "github.com/nguba/RedLionPXU/internal/gen/pxu/v1;pxupb";
+
+// RunStatus reflects the operational status of the PXU.
+// Must match your Go `RunStatus` definition's underlying values.
+enum RunStatus {
+  RUN_STATUS_UNSPECIFIED = 0;
+  RUN_STATUS_OFF         = 1;
+  RUN_STATUS_RUNNING     = 2;
+  RUN_STATUS_ERROR       = 3;
+  // Add other states as needed
+}
+
+// Stats represents the current operational data from the PXU.
+message Stats {
+  double pv     = 1;  // Process Value
+  double sp     = 2;  // Setpoint
+  bool   out1   = 3;  // Output 1 status
+  bool   out2   = 4;  // Output 2 status
+  bool   at     = 5;  // Autotune status
+  double tp     = 6;  // Proportional Band (TP)
+  uint32 ti     = 7;  // Integral Time (TI)
+  uint32 td     = 8;  // Derivative Time (TD)
+  uint32 t_group = 9;  // Temperature Group
+  RunStatus rs   = 10; // Run Status
+  string vunit  = 11; // Value Unit (e.g., "°C", "%")
+  uint32 pc     = 12; // Current Power (e.g., PWM output)
+  uint32 ps     = 13; // Max Power (e.g., PWM period)
+  double psr    = 14; // Power Ratio (PC/PS)
+}
+
+// GetStatsRequest is the request for current PXU statistics.
+message GetStatsRequest {}
+
+// GetStatsResponse contains the current PXU statistics.
+message GetStatsResponse {
+  Stats stats = 1;
+}
+
+// SetSetpointRequest sets the setpoint value for the PXU.
+message SetSetpointRequest {
+  double setpoint = 1; // The desired setpoint value
+}
+
+// SetSetpointResponse indicates the result of setting the setpoint.
+message SetSetpointResponse {
+  bool success = 1;
+  string message = 2; // Optional: error message on failure
+}
+
+// RedLionPxuService defines the gRPC API for interacting with the PXU.
+service RedLionPxuService {
+  // GetStats retrieves the current operational statistics from the PXU.
+  rpc GetStats(GetStatsRequest) returns (GetStatsResponse);
+
+  // SetSetpoint sets the desired setpoint value on the PXU.
+  rpc SetSetpoint(SetSetpointRequest) returns (SetSetpointResponse);
+
+  // Add more methods here as needed, e.g., SetMode, ReadAlarms, etc.
+}
