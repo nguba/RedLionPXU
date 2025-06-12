@@ -331,23 +331,23 @@ func TestPxu_ReadProfile(t *testing.T) {
 				var expected []Segment
 				expected = append(expected, Segment{
 					Id: 0,
-					Sp: 250,
-					T:  7200,
+					Sp: 25.0,
+					T:  720.0,
 				})
 				expected = append(expected, Segment{
 					Id: 1,
-					Sp: 305,
-					T:  3600,
+					Sp: 30.5,
+					T:  360.0,
 				})
 				expected = append(expected, Segment{
 					Id: 2,
-					Sp: 620,
-					T:  7200,
+					Sp: 62.0,
+					T:  720.0,
 				})
 				expected = append(expected, Segment{
 					Id: 3,
-					Sp: 720,
-					T:  9999,
+					Sp: 72.0,
+					T:  999.9,
 				})
 
 				if !reflect.DeepEqual(profile.Segments, expected) {

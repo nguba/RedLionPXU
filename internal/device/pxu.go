@@ -113,7 +113,7 @@ func (p *Pxu) ReadProfile(id uint16) (*Profile, error) {
 		return nil, fmt.Errorf("failed reading linked profile from unit %d: %w", p.unitId, err)
 	}
 
-	profile := NewProfile(id, segmentCount[0]+1, linkProfile[0])
+	profile := NewProfile(id, segmentCount[0], linkProfile[0])
 
 	offset := id * 32
 	regs, err := p.readRegistersWithRetry(RegProfSegmentStart+offset, profile.SegCount*2)
@@ -130,11 +130,12 @@ func (p *Pxu) ReadProfile(id uint16) (*Profile, error) {
 }
 
 func fillProfile(profile *Profile, regs []uint16) {
-	for i, l := uint16(0), profile.SegCount; i < l; i += 2 {
+	for i := uint16(0); i < profile.SegCount; i++ {
+		p := i * 2
 		seg := Segment{
 			Id: uint8(i),
-			Sp: toFloat(regs[i]),
-			T:  toFloat(regs[i+1]),
+			Sp: toFloat(regs[p]),
+			T:  toFloat(regs[p+1]),
 		}
 		profile.Segments = append(profile.Segments, seg)
 	}
