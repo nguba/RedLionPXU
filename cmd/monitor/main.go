@@ -1,9 +1,9 @@
 package main
 
 import (
-	"RedLionPXU/internal/device"
 	"flag"
 	"fmt"
+	"github.com/nguba/RedLionPXU/internal/device"
 	"log"
 	"time"
 )
