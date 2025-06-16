@@ -1,4 +1,4 @@
-module RedLionPXU
+module github.com/nguba/RedLionPXU
 
 go 1.24
 
