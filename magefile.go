@@ -18,7 +18,7 @@ func Proto() error {
 	fmt.Println("Generating Go code from .proto files...")
 
 	// Use Go's native os.MkdirAll to create the directory, completely bypassing shell mkdir issues.
-	if err := os.MkdirAll("internal/gen/pxu/v1", 0755); err != nil {
+	if err := os.MkdirAll("public/api/pxu/v1", 0755); err != nil {
 		return fmt.Errorf("failed to create proto output directory: %w", err)
 	}
 
@@ -26,12 +26,12 @@ func Proto() error {
 	// sh.RunV is a Mage helper that runs a command with verbose output.
 	// It handles cross-platform path separators and executable finding.
 	return sh.RunV("protoc",
-		"--proto_path=api/pxu/v1",
-		"--go_out=internal/gen/pxu/v1",
+		"--proto_path=internal/proto",
+		"--go_out=public/api/pxu/v1",
 		"--go_opt=paths=source_relative",
-		"--go-grpc_out=internal/gen/pxu/v1",
+		"--go-grpc_out=public/api/pxu/v1",
 		"--go-grpc_opt=paths=source_relative",
-		"api/pxu/v1/pxu.proto",
+		"internal/proto/pxu.proto",
 	)
 }
 
@@ -74,8 +74,8 @@ func Clean() error {
 	if err := os.RemoveAll("build"); err != nil {
 		fmt.Printf("Warning: failed to remove build directory: %v\n", err)
 	}
-	if err := os.RemoveAll("internal/gen"); err != nil {
-		fmt.Printf("Warning: failed to remove internal/gen directory: %v\n", err)
+	if err := os.RemoveAll("public/api"); err != nil {
+		fmt.Printf("Warning: failed to remove generated files: %v\n", err)
 	}
 
 	// For go clean, we can still use sh.RunV

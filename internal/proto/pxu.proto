@@ -1,17 +1,15 @@
 syntax = "proto3";
 
-package redlionpxu.v1;
+package api.v1;
 
-option go_package = "github.com/nguba/RedLionPXU/internal/gen/pxu/v1;pxupb";
+option go_package = "github.com/nguba/RedLionPXU/public/api/pxu/v1";
 
 // RunStatus reflects the operational status of the PXU.
-// Must match your Go `RunStatus` definition's underlying values.
 enum RunStatus {
   RUN_STATUS_UNSPECIFIED = 0;
   RUN_STATUS_OFF         = 1;
   RUN_STATUS_RUNNING     = 2;
   RUN_STATUS_ERROR       = 3;
-  // Add other states as needed
 }
 
 // Stats represents the current operational data from the PXU.
@@ -42,7 +40,7 @@ message GetStatsResponse {
 
 // SetSetpointRequest sets the setpoint value for the PXU.
 message SetSetpointRequest {
-  double setpoint = 1; // The desired setpoint value
+  double setpoint = 1;
 }
 
 // SetSetpointResponse indicates the result of setting the setpoint.

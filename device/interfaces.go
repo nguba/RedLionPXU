@@ -10,14 +10,19 @@ type Modbus interface {
 	Close() error
 }
 
-// PxuReader defines the interface for reading device data
 type PxuReader interface {
 	ReadStats() (*Stats, error)
 	ReadInfo() (*Info, error)
 	ReadProfile() error
-	Close() error
 }
 
 type PxuWriter interface {
-	WriteSp(value uint16) error
+	WriteSetpoint(value uint16) error
+	Run() error
+	Stop() error
+}
+
+type PidController interface {
+	UpdateSetpoint(value float64) error
+	Close() error
 }

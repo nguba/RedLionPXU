@@ -437,7 +437,7 @@ func TestPxu_Start(t *testing.T) {
 				t.Errorf("expected value '%d', got '%d'", RsStop, val)
 			}
 
-			err = pxu.Start()
+			err = pxu.Run()
 
 			if tt.expectError {
 				if err == nil {

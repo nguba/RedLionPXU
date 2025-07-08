@@ -33,14 +33,18 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to instantiate modbus handler: %v", err)
 	}
-	defer client.Close()
 
 	// Create PXU instance
 	pxu, err := device.NewPxu(uint8(*unitID), client, 3*time.Second, 30)
 	if err != nil {
 		log.Fatalf("Failed to create controller: %v", err)
 	}
-	defer pxu.Close()
+	defer func(pxu *device.Pxu) {
+		err := pxu.Close()
+		if err != nil {
+			log.Fatalf("Failed to close controller: %v", err)
+		}
+	}(pxu)
 
 	if infoF != nil && *infoF {
 		info, err := pxu.ReadInfo()
@@ -69,7 +73,7 @@ func main() {
 		log.Fatalf("Failed to write Sp: %v", err)
 	}
 
-	if err := pxu.Start(); err != nil {
+	if err := pxu.Run(); err != nil {
 		log.Fatalf("Failed to start controller: %v", err)
 	}
 	showStats(pxu)

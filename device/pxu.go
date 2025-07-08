@@ -63,9 +63,9 @@ func (p *Pxu) readRegistersWithRetry(addr, count uint16) ([]uint16, error) {
 
 func (p *Pxu) Close() error {
 	if p.client != nil {
-		return nil
+		return p.client.Close()
 	}
-	return p.client.Close()
+	return fmt.Errorf("no client to close")
 }
 
 func (p *Pxu) ReadStats() (*Stats, error) {
@@ -172,7 +172,7 @@ func (p *Pxu) Stop() error {
 	return nil
 }
 
-func (p *Pxu) Start() error {
+func (p *Pxu) Run() error {
 	if err := p.UpdateControllerStatus(RsStart); err != nil {
 		return fmt.Errorf("failed to start unit %d: %w", p.unitId, err)
 	}
