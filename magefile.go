@@ -24,7 +24,6 @@ const (
 	clientBin = "pxu-cli"
 )
 
-// Proto generates Go code from .proto files.
 func Proto() error {
 	fmt.Println("Generating Go code from .proto files...")
 
@@ -42,7 +41,6 @@ func Proto() error {
 	)
 }
 
-// Build compiles the server and client binaries.
 func Build() error {
 	mg.Deps(Proto)
 
@@ -78,7 +76,6 @@ func BuildClient() error {
 	return nil
 }
 
-// Run builds and runs the gRPC server.
 func Run() error {
 	mg.Deps(Build)
 
@@ -89,32 +86,27 @@ func Run() error {
 	return cmd.Run()
 }
 
-// Test runs all Go tests.
 func Test() error {
 	mg.Deps(Build)
 	fmt.Println("Running tests...")
 	return sh.RunV("go", "test", "-v", "./...")
 }
 
-// TestCoverage runs tests with coverage report.
 func TestCoverage() error {
 	fmt.Println("Running tests with coverage...")
 	return sh.RunV("go", "test", "-v", "-coverprofile=coverage.out", "./...")
 }
 
-// Lint runs golangci-lint on the project.
 func Lint() error {
 	fmt.Println("Running linter...")
 	return sh.RunV("golangci-lint", "run")
 }
 
-// Format formats Go code using gofmt.
 func Format() error {
 	fmt.Println("Formatting code...")
 	return sh.RunV("gofmt", "-s", "-w", ".")
 }
 
-// Clean removes built binaries and generated code.
 func Clean() error {
 	fmt.Println("Cleaning up...")
 
