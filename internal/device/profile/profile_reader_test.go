@@ -1,4 +1,4 @@
-package public
+package profile
 
 import (
 	"fmt"

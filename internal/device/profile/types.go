@@ -1,4 +1,4 @@
-package public
+package profile
 
 // Segment represents a single step within a brewing profile.
 type Segment struct {

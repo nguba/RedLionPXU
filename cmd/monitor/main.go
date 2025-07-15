@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/nguba/RedLionPXU/device"
+	device2 "github.com/nguba/RedLionPXU/internal/device"
 	"log"
 	"time"
 )
@@ -20,7 +20,7 @@ func main() {
 	flag.Parse()
 
 	// Create configuration
-	cfg := &device.Configuration{
+	cfg := &device2.Configuration{
 		URL:      fmt.Sprintf("rtu://%s", *port),
 		Speed:    38400,
 		DataBits: 8,
@@ -29,17 +29,17 @@ func main() {
 	}
 
 	// Create real client
-	client, err := device.NewModbusHandler(cfg)
+	client, err := device2.NewModbusHandler(cfg)
 	if err != nil {
 		log.Fatalf("Failed to instantiate modbus handler: %v", err)
 	}
 
 	// Create PXU instance
-	pxu, err := device.NewPxu(uint8(*unitID), client, 3*time.Second, 30)
+	pxu, err := device2.NewPxu(uint8(*unitID), client, 3*time.Second, 30)
 	if err != nil {
 		log.Fatalf("Failed to create controller: %v", err)
 	}
-	defer func(pxu *device.Pxu) {
+	defer func(pxu *device2.Pxu) {
 		err := pxu.Close()
 		if err != nil {
 			log.Fatalf("Failed to close controller: %v", err)
@@ -86,7 +86,7 @@ func main() {
 
 }
 
-func showStats(pxu *device.Pxu) {
+func showStats(pxu *device2.Pxu) {
 	stats, err := pxu.ReadStats()
 	if err != nil {
 		log.Fatalf("Failed to read stats: %v", err)
