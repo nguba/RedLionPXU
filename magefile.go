@@ -93,6 +93,7 @@ func Test() error {
 }
 
 func TestCoverage() error {
+	mg.Deps(Build)
 	fmt.Println("Running tests with coverage...")
 	return sh.RunV("go", "test", "-v", "-coverprofile=coverage.out", "./...")
 }
