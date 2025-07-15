@@ -91,6 +91,7 @@ func Run() error {
 
 // Test runs all Go tests.
 func Test() error {
+	mg.Deps(Build)
 	fmt.Println("Running tests...")
 	return sh.RunV("go", "test", "-v", "./...")
 }
