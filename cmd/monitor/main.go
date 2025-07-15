@@ -3,14 +3,14 @@ package main
 import (
 	"flag"
 	"fmt"
-	device2 "github.com/nguba/RedLionPXU/internal/device"
+	"github.com/nguba/RedLionPXU/internal/device"
 	"log"
 	"time"
 )
 
 func main() {
 	var (
-		unitID = flag.Uint("unit", 6, "Modbus unit ID (default: 6)")
+		unitId = flag.Uint("unit", 6, "Modbus unit ID (default: 6)")
 		port   = flag.String("port", "COM3", "Serial port (default: COM3)")
 		infoF  = flag.Bool("info", false, "Print device information")
 		statsF = flag.Bool("stats", false, "Print device statistics")
@@ -19,8 +19,8 @@ func main() {
 
 	flag.Parse()
 
-	// Create configuration
-	cfg := &device2.Configuration{
+	// this should represent the communication settings of the device used.
+	cfg := &device.Configuration{
 		URL:      fmt.Sprintf("rtu://%s", *port),
 		Speed:    38400,
 		DataBits: 8,
@@ -28,18 +28,17 @@ func main() {
 		Timeout:  500 * time.Millisecond,
 	}
 
-	// Create real client
-	client, err := device2.NewModbusHandler(cfg)
+	client, err := device.NewModbusHandler(cfg)
 	if err != nil {
 		log.Fatalf("Failed to instantiate modbus handler: %v", err)
 	}
 
 	// Create PXU instance
-	pxu, err := device2.NewPxu(uint8(*unitID), client, 3*time.Second, 30)
+	pxu, err := device.NewPxu(device.UnitId(*unitId), client, 3*time.Second, 30)
 	if err != nil {
 		log.Fatalf("Failed to create controller: %v", err)
 	}
-	defer func(pxu *device2.Pxu) {
+	defer func(pxu *device.Pxu) {
 		err := pxu.Close()
 		if err != nil {
 			log.Fatalf("Failed to close controller: %v", err)
@@ -86,7 +85,7 @@ func main() {
 
 }
 
-func showStats(pxu *device2.Pxu) {
+func showStats(pxu *device.Pxu) {
 	stats, err := pxu.ReadStats()
 	if err != nil {
 		log.Fatalf("Failed to read stats: %v", err)

@@ -10,7 +10,7 @@ import (
 func TestNewPxu(t *testing.T) {
 	tests := []struct {
 		name        string
-		unitId      uint8
+		unitId      UnitId
 		client      Modbus
 		timeout     time.Duration
 		retries     int

@@ -7,7 +7,7 @@ import (
 
 type MockModbus struct {
 	mu            sync.RWMutex
-	unitId        uint8
+	unitId        UnitId
 	registers     map[uint16]uint16
 	shouldError   bool
 	errorMessage  string
@@ -15,14 +15,15 @@ type MockModbus struct {
 	recordingFile string
 }
 
-// NewMockModbus creates a new mock Modbus client
+// NewMockModbus creates a new mock Modbus client impersonating the RedLion PXU.  A new Pxu can be instantiated
+// with this test double as the client when no device is plugged in.
 func NewMockModbus() *MockModbus {
 	return &MockModbus{
 		registers: make(map[uint16]uint16),
 	}
 }
 
-func (m *MockModbus) SetUnitId(id uint8) error {
+func (m *MockModbus) SetUnitId(id UnitId) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
@@ -46,6 +47,7 @@ func (m *MockModbus) ReadRegister(address uint16) (uint16, error) {
 	}
 	return ErrVal, nil
 }
+
 func (m *MockModbus) ReadRegisters(address, quantity uint16) ([]uint16, error) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
@@ -99,4 +101,14 @@ func (m *MockModbus) SimulateError(shouldError bool, message string) {
 	defer m.mu.Unlock()
 	m.shouldError = shouldError
 	m.errorMessage = message
+}
+
+func (m *MockModbus) GetStatsRegister() []uint16 {
+	registers := make([]uint16, StatsRegCount)
+	registers[RegPV] = 255                   // 25.5°C
+	registers[RegSP] = 304                   // 30.4°C
+	registers[RegLED] = LEDCelsius | LEDOut1 // Celsius + Out1 active
+	registers[RegControllerStatus] = uint16(RunStatusRun)
+
+	return registers
 }

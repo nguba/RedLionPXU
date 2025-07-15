@@ -2,6 +2,7 @@ package pxu
 
 import (
 	"context"
+	"github.com/nguba/RedLionPXU/internal/device"
 	v1 "github.com/nguba/RedLionPXU/public/api/pxu/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -53,10 +54,28 @@ func setupTestServer(t *testing.T, svc v1.RedLionPxuServiceServer) v1.RedLionPxu
 }
 
 func TestApi_GetStats(t *testing.T) {
-	client := setupTestServer(t, NewPxuService())
-	stats, err := client.GetStats(context.Background(), &v1.GetStatsRequest{})
+
+	modbus := device.NewMockModbus()
+	reg := modbus.GetStatsRegister()
+	err := modbus.SetRegisters(0, reg)
+	if err != nil {
+		t.Fatalf("failed to set registers: %v", err)
+	}
+	svc, err := NewPxuService(5, modbus)
+
+	client := setupTestServer(t, svc)
+	got, err := client.GetStats(context.Background(), &v1.GetStatsRequest{})
 	if err != nil {
 		t.Fatalf("GetStats failed: %v", err)
 	}
-	t.Log(stats)
+
+	t.Log(got)
+
+	want, err := device.NewStats(reg)
+	if err != nil {
+		t.Fatalf("NewStats failed: %v", err)
+	}
+
+	// TODO figure out an elegant way to assert this
+	t.Log(makeGetStatsResponse(want))
 }

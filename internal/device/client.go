@@ -12,11 +12,11 @@ type ModbusHandler struct {
 	modbus *modbus.ModbusClient
 }
 
-func (c *ModbusHandler) SetUnitId(id uint8) error {
+func (c *ModbusHandler) SetUnitId(id UnitId) error {
 	if c.modbus == nil {
 		return fmt.Errorf("modbus client is nil")
 	}
-	return c.modbus.SetUnitId(id)
+	return c.modbus.SetUnitId(uint8(id))
 }
 
 func (c *ModbusHandler) ReadRegisters(address, quantity uint16) ([]uint16, error) {
