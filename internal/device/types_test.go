@@ -9,11 +9,11 @@ func TestRunStatus_String(t *testing.T) {
 		status   RunStatus
 		expected string
 	}{
-		{RunStatusStop, "STOP"},
-		{RunStatusRun, "RUN"},
-		{RunStatusEnd, "END"},
-		{RunStatusPause, "PAUSE"},
-		{RunStatusAdvanceProfile, "ADVANCE PROFILE"},
+		{Stop, "STOP"},
+		{Run, "RUN"},
+		{End, "END"},
+		{Pause, "PAUSE"},
+		{AdvanceProfile, "ADVANCE PROFILE"},
 		{RunStatus(99), "UNKNOWN (99)"},
 	}
 

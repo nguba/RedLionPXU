@@ -23,7 +23,7 @@ func TestIntegration_StatsWorkflow(t *testing.T) {
 	statsRegs[RegTI] = 120   // TI value
 	statsRegs[RegTD] = 30    // TD value
 	statsRegs[RegTGroup] = 1 // Temperature group
-	statsRegs[RegControllerStatus] = uint16(RunStatusRun)
+	statsRegs[RegControllerStatus] = uint16(Run)
 	statsRegs[RegLED] = LEDCelsius | LEDOut1 | LEDAt
 	statsRegs[RegPC] = 85  // PC value
 	statsRegs[RegPS] = 100 // PS value
@@ -70,7 +70,7 @@ func TestIntegration_StatsWorkflow(t *testing.T) {
 	if !stats.At {
 		t.Error("expected At to be true")
 	}
-	if stats.RS != RunStatusRun {
+	if stats.RS != Run {
 		t.Errorf("expected run status RUN, got %v", stats.RS)
 	}
 
@@ -142,7 +142,7 @@ func ExamplePxu_ReadStats() {
 	registers[RegPV] = 235 // 23.5°C
 	registers[RegSP] = 250 // 25.0°C
 	registers[RegLED] = LEDCelsius | LEDOut1
-	registers[RegControllerStatus] = uint16(RunStatusRun)
+	registers[RegControllerStatus] = uint16(Run)
 	mock.SetRegisters(0, registers)
 
 	// Create PXU instance

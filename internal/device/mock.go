@@ -115,7 +115,7 @@ func (m *MockModbus) GetStatsRegister() []uint16 {
 	registers[RegPV] = 255                   // 25.5°C
 	registers[RegSP] = 304                   // 30.4°C
 	registers[RegLED] = LEDCelsius | LEDOut1 // Celsius + Out1 active
-	registers[RegControllerStatus] = uint16(RunStatusRun)
+	registers[RegControllerStatus] = uint16(Run)
 
 	return registers
 }

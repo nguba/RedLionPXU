@@ -98,7 +98,7 @@ func TestPxu_ReadDeviceStats(t *testing.T) {
 				registers[RegPV] = 250                   // 25.0°C
 				registers[RegSP] = 300                   // 30.0°C
 				registers[RegLED] = LEDCelsius | LEDOut1 // Celsius + Out1 active
-				registers[RegControllerStatus] = uint16(RunStatusRun)
+				registers[RegControllerStatus] = uint16(Run)
 
 				mock.SetRegisters(0, registers)
 			},
@@ -119,7 +119,7 @@ func TestPxu_ReadDeviceStats(t *testing.T) {
 				if stats.Out2 {
 					t.Error("expected Out2 to be false")
 				}
-				if stats.RS != RunStatusRun {
+				if stats.RS != Run {
 					t.Errorf("expected run status RUN, got %v", stats.RS)
 				}
 			},

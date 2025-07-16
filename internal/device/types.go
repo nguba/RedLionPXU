@@ -101,28 +101,28 @@ func (info Info) String() string {
 	return fmt.Sprintf("Model: %s, Firmware: %s", strings.Trim(info.Model, " "), info.Firmware)
 }
 
-// RunStatus shows the state of the device: RunStatusStop, RunStatusRun, RunStatusEnd, RunStatusPause, RunStatusAdvanceProfile
+// RunStatus shows the state of the device: Stop, Run, End, Pause, AdvanceProfile
 type RunStatus uint16
 
 const (
-	RunStatusStop RunStatus = iota
-	RunStatusRun
-	RunStatusEnd
-	RunStatusPause
-	RunStatusAdvanceProfile
+	Stop RunStatus = iota
+	Run
+	End
+	Pause
+	AdvanceProfile
 )
 
 func (s RunStatus) String() string {
 	switch s {
-	case RunStatusStop:
+	case Stop:
 		return "STOP"
-	case RunStatusRun:
+	case Run:
 		return "RUN"
-	case RunStatusEnd:
+	case End:
 		return "END"
-	case RunStatusPause:
+	case Pause:
 		return "PAUSE"
-	case RunStatusAdvanceProfile:
+	case AdvanceProfile:
 		return "ADVANCE PROFILE"
 	default:
 		return fmt.Sprintf("UNKNOWN (%d)", s)

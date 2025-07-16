@@ -91,7 +91,7 @@ func TestApi_GetStats(t *testing.T) {
 	if got.Stats.Out2 != false {
 		t.Errorf("GetStats returned wrong out2: %v", got.Stats.Out2)
 	}
-	if got.Stats.Rs != device.RunStatusRun.String() {
+	if got.Stats.Rs != device.Run.String() {
 		t.Errorf("GetStats returned wrong rs: %v", got.Stats.Rs)
 	}
 	if got.Stats.Vunit != "C" {

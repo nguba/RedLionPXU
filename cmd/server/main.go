@@ -6,6 +6,8 @@ import (
 	"time"
 )
 
+const unit = device.UnitId(5)
+
 // DefaultConfiguration returns a default configuration for COM3
 func DefaultConfiguration() *device.Configuration {
 	return &device.Configuration{
@@ -28,9 +30,9 @@ func NewDefaultPxu(unitId device.UnitId) (*device.Pxu, error) {
 }
 
 func main() {
-	log.Println("starting server")
+	log.Printf("starting server for unit %d", unit)
 
-	pxu, err := NewDefaultPxu(5)
+	pxu, err := NewDefaultPxu(unit)
 	if err != nil {
 		log.Fatal(err)
 	}
