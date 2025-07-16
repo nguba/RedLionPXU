@@ -6,14 +6,17 @@ import (
 	"time"
 )
 
+// these are discovery tests to determine whether the assumptions from the fake map the actual device.
+// these need reworking (WIP) - we need to use these with both, the device and the mock.
+
 // TestIntegration_DeviceStatsWorkflow tests the complete workflow
 func TestIntegration_StatsWorkflow(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test in short mode")
 	}
 
-	// Set up mock with realistic data
-	mock := NewMockModbus()
+	// Set up modbus with realistic data
+	modbus := NewMockModbus()
 
 	// Configure device stats registers
 	statsRegs := make([]uint16, StatsRegCount)
@@ -29,7 +32,10 @@ func TestIntegration_StatsWorkflow(t *testing.T) {
 	statsRegs[RegPS] = 100 // PS value
 	statsRegs[RegPSR] = 95 // 9.5 PSR value
 
-	mock.SetRegisters(0, statsRegs)
+	err := modbus.SetRegisters(0, statsRegs)
+	if err != nil {
+		t.Errorf("Error setting registers: %v", err)
+	}
 
 	// Configure device info registers
 	infoRegs := []uint16{
@@ -39,10 +45,10 @@ func TestIntegration_StatsWorkflow(t *testing.T) {
 		0x0000, 0x0000, 0x0000, // padding
 		125, // firmware 1.25
 	}
-	mock.SetRegisters(RegInfoStart, infoRegs)
+	modbus.SetRegisters(RegInfoStart, infoRegs)
 
 	// Create PXU instance
-	pxu, err := NewPxu(6, mock, 2*time.Second, 3)
+	pxu, err := NewPxu(6, modbus, 2*time.Second, 3)
 	if err != nil {
 		t.Fatalf("failed to create PXU: %v", err)
 	}
