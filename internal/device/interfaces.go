@@ -10,18 +10,6 @@ type Modbus interface {
 	Close() error
 }
 
-//type PxuReader interface {
-//	ReadStats() (*Stats, error)
-//	ReadInfo() (*Info, error)
-//	ReadProfile() error
-//}
-//
-//type PxuWriter interface {
-//	WriteSetpoint(value uint16) error
-//	Run() error
-//	Stop() error
-//}
-
 type PidController interface {
 	UpdateSetpoint(value float64) error
 	Close() error
