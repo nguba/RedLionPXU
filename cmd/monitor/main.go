@@ -28,7 +28,7 @@ func main() {
 		Timeout:  500 * time.Millisecond,
 	}
 
-	client, err := device.NewModbusHandler(cfg)
+	client, err := device.NewModbusDevice(cfg)
 	if err != nil {
 		log.Fatalf("Failed to instantiate modbus handler: %v", err)
 	}
