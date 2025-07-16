@@ -24,13 +24,11 @@ func TestKbhReader_ReadRecipe(t *testing.T) {
 			r := &KbhReader{
 				dataSource: file,
 			}
-			got, err := r.ReadRecipe()
+			_, err = r.ReadRecipe()
 			if (err != nil) != tt.wantErr {
 				t.Errorf("ReadRecipe() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-
-			t.Log(got)
 
 			//if !reflect.DeepEqual(got, tt.want) {
 			//	t.Errorf("ReadRecipe() got = %v, want %v", got, tt.want)

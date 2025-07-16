@@ -1,2 +1,4 @@
 /public/api/pxu/v1/
 /coverage.out
+/build/pxu-client.exe
+/build/pxu-server.exe

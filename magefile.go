@@ -18,10 +18,10 @@ const (
 	protoDir  = "public/api/pxu/v1"
 	protoFile = "pxu.proto"
 	buildDir  = "build"
-	serverCmd = "./cmd/pxu-grpc-server"
-	clientCmd = "./cmd/pxu-cli"
-	serverBin = "pxu-grpc-server"
-	clientBin = "pxu-cli"
+	serverCmd = "./cmd/server"
+	clientCmd = "./cmd/client"
+	serverBin = "pxu-server"
+	clientBin = "pxu-client"
 )
 
 func Proto() error {
@@ -48,13 +48,13 @@ func Build() error {
 		return fmt.Errorf("failed to create build directory: %w", err)
 	}
 
-	//if err := BuildServer(); err != nil {
-	//	return err
-	//}
+	if err := BuildServer(); err != nil {
+		return err
+	}
 
-	//if err := BuildClient(); err != nil {
-	//	return err
-	//}
+	if err := BuildClient(); err != nil {
+		return err
+	}
 
 	return nil
 }

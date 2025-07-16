@@ -75,6 +75,13 @@ func (m *MockModbus) Close() error {
 	return nil
 }
 
+func (m *MockModbus) Reset() {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+
+	clear(m.registers)
+}
+
 // SetRegister sets a register value for testing
 func (m *MockModbus) SetRegister(address uint16, value uint16) error {
 	m.mu.Lock()

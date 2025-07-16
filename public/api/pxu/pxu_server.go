@@ -7,20 +7,20 @@ import (
 	"time"
 )
 
-type PxuService struct {
-	v1.UnimplementedRedLionPxuServiceServer
+type PxuServer struct {
+	v1.UnimplementedRedLionPxuServer
 	pid *device.Pxu
 }
 
-func NewPxuService(unitId device.UnitId, modbus device.Modbus) (*PxuService, error) {
+func NewPxuServer(unitId device.UnitId, modbus device.Modbus) (*PxuServer, error) {
 	pxu, err := device.NewPxu(unitId, modbus, time.Second, 3)
 	if err != nil {
 		return nil, err
 	}
-	return &PxuService{pid: pxu}, nil
+	return &PxuServer{pid: pxu}, nil
 }
 
-func (s *PxuService) GetStats(_ context.Context, in *v1.GetStatsRequest) (*v1.GetStatsResponse, error) {
+func (s *PxuServer) GetStats(_ context.Context, in *v1.GetStatsRequest) (*v1.GetStatsResponse, error) {
 	stats, err := s.pid.ReadStats()
 	if err != nil {
 		return nil, err

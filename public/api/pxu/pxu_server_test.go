@@ -12,16 +12,23 @@ import (
 	"testing"
 )
 
-const bufSize = 1024 * 1024
+const (
+	bufSize = 1024 * 1024
+	unit    = device.UnitId(5)
+)
 
-var lis *bufconn.Listener
+var (
+	lis    *bufconn.Listener
+	modbus *device.MockModbus
+)
 
 // initialize a listener that doesn't depend on a networked implementation
 func init() {
 	lis = bufconn.Listen(bufSize)
+	modbus = device.NewMockModbus()
 }
 
-func setupTestServer(t *testing.T, svc v1.RedLionPxuServiceServer) v1.RedLionPxuServiceClient {
+func setupTestServer(t *testing.T) v1.RedLionPxuClient {
 	t.Helper() // Mark this as a helper function
 
 	lis := bufconn.Listen(1024 * 1024)
@@ -30,7 +37,8 @@ func setupTestServer(t *testing.T, svc v1.RedLionPxuServiceServer) v1.RedLionPxu
 	srv := grpc.NewServer()
 	t.Cleanup(func() { srv.Stop() })
 
-	v1.RegisterRedLionPxuServiceServer(srv, svc)
+	svc, err := NewPxuServer(unit, modbus)
+	v1.RegisterRedLionPxuServer(srv, svc)
 
 	go func() {
 		if err := srv.Serve(lis); err != nil {
@@ -48,34 +56,45 @@ func setupTestServer(t *testing.T, svc v1.RedLionPxuServiceServer) v1.RedLionPxu
 	if err != nil {
 		t.Fatalf("failed to create client: %v", err)
 	}
-	t.Cleanup(func() { conn.Close() })
+	t.Cleanup(func() {
+		_ = conn.Close()
+	})
 
-	return v1.NewRedLionPxuServiceClient(conn)
+	return v1.NewRedLionPxuClient(conn)
 }
 
 func TestApi_GetStats(t *testing.T) {
+	client := setupTestServer(t)
 
-	modbus := device.NewMockModbus()
-	reg := modbus.GetStatsRegister()
-	err := modbus.SetRegisters(0, reg)
+	err := modbus.SetRegisters(0, modbus.GetStatsRegister())
 	if err != nil {
 		t.Fatalf("failed to set registers: %v", err)
 	}
-	svc, err := NewPxuService(5, modbus)
+	t.Cleanup(func() {
+		modbus.Reset()
+	})
 
-	client := setupTestServer(t, svc)
 	got, err := client.GetStats(context.Background(), &v1.GetStatsRequest{})
 	if err != nil {
 		t.Fatalf("GetStats failed: %v", err)
 	}
 
-	t.Log(got)
-
-	want, err := device.NewStats(reg)
-	if err != nil {
-		t.Fatalf("NewStats failed: %v", err)
+	if got.Stats.Pv != 25.5 {
+		t.Errorf("GetStats returned wrong pv: %v", got.Stats.Pv)
 	}
-
-	// TODO figure out an elegant way to assert this
-	t.Log(makeGetStatsResponse(want))
+	if got.Stats.Sp != 30.4 {
+		t.Errorf("GetStats returned wrong sp: %v", got.Stats.Sp)
+	}
+	if got.Stats.Out1 != true {
+		t.Errorf("GetStats returned wrong out1: %v", got.Stats.Out1)
+	}
+	if got.Stats.Out2 != false {
+		t.Errorf("GetStats returned wrong out2: %v", got.Stats.Out2)
+	}
+	if got.Stats.Rs != device.RunStatusRun.String() {
+		t.Errorf("GetStats returned wrong rs: %v", got.Stats.Rs)
+	}
+	if got.Stats.Vunit != "C" {
+		t.Errorf("GetStats returned wrong vunit: %v", got.Stats.Vunit)
+	}
 }
