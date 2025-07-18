@@ -1,5 +1,5 @@
 /coverage.out
 /build/pxu-client.exe
 /build/pxu-server.exe
-/public/api/pxu/v1/pxu.pb.go
-/public/api/pxu/v1/pxu_grpc.pb.go
+/public/api/v1/pxu.pb.go
+/public/api/v1/pxu_grpc.pb.go

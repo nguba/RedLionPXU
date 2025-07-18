@@ -1,15 +1,16 @@
-package pxu
+package api
 
 import (
 	"context"
 	"github.com/nguba/RedLionPXU/internal/device"
-	v1 "github.com/nguba/RedLionPXU/public/api/pxu/v1"
+	v2 "github.com/nguba/RedLionPXU/public/api/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/test/bufconn"
 	"log"
 	"net"
 	"testing"
+	"time"
 )
 
 const (
@@ -28,28 +29,26 @@ func init() {
 	modbus = device.NewMockModbus()
 }
 
-func setupTestServer(t *testing.T) v1.RedLionPxuClient {
+func setupTestServer(t *testing.T) v2.RedLionPxuClient {
 	t.Helper() // Mark this as a helper function
 
+	// setup server
 	lis := bufconn.Listen(1024 * 1024)
-	t.Cleanup(func() { lis.Close() })
+	pxu, err := device.NewPxu(unit, modbus, time.Second, 3)
 
-	srv := grpc.NewServer()
-	t.Cleanup(func() { srv.Stop() })
+	svc, err := NewServer(pxu, lis)
+	t.Cleanup(func() {
+		svc.Stop()
+	})
 
-	svc, err := NewPxuServer(unit, modbus)
-	v1.RegisterRedLionPxuServer(srv, svc)
+	if err := svc.Start(); err != nil {
+		log.Fatalf("failed to serve: %v", err)
+	}
 
-	go func() {
-		if err := srv.Serve(lis); err != nil {
-			log.Fatalf("failed to serve: %v", err)
-		}
-	}()
-
+	// setup client
 	dialer := func(context.Context, string) (net.Conn, error) {
 		return lis.Dial()
 	}
-
 	conn, err := grpc.NewClient("passthrough:///bufnet",
 		grpc.WithContextDialer(dialer),
 		grpc.WithTransportCredentials(insecure.NewCredentials()))
@@ -60,7 +59,7 @@ func setupTestServer(t *testing.T) v1.RedLionPxuClient {
 		_ = conn.Close()
 	})
 
-	return v1.NewRedLionPxuClient(conn)
+	return v2.NewRedLionPxuClient(conn)
 }
 
 func TestApi_GetStats(t *testing.T) {
@@ -74,7 +73,7 @@ func TestApi_GetStats(t *testing.T) {
 		modbus.Reset()
 	})
 
-	got, err := client.GetStats(context.Background(), &v1.GetStatsRequest{})
+	got, err := client.GetStats(context.Background(), &v2.GetStatsRequest{})
 	if err != nil {
 		t.Fatalf("GetStats failed: %v", err)
 	}
@@ -97,4 +96,5 @@ func TestApi_GetStats(t *testing.T) {
 	if got.Stats.Vunit != "C" {
 		t.Errorf("GetStats returned wrong vunit: %v", got.Stats.Vunit)
 	}
+	t.Log(got)
 }

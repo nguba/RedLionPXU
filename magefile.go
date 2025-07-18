@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	protoDir  = "public/api/pxu/v1"
+	protoDir  = "public/api/v1"
 	protoFile = "pxu.proto"
 	buildDir  = "build"
 	serverCmd = "./cmd/server"

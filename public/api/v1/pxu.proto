@@ -7,20 +7,20 @@ option go_package = "github.com/nguba/RedLionPXU/public/api/pxu/v1";
 
 // Stats represents the current operational data from the PXU.
 message Stats {
-  double pv     = 1;  // Process Value
-  double sp     = 2;  // Setpoint
-  bool   out1   = 3;  // Output 1 status
-  bool   out2   = 4;  // Output 2 status
-  bool   at     = 5;  // Autotune status
-  double tp     = 6;  // Proportional Band (TP)
-  uint32 ti     = 7;  // Integral Time (TI)
-  uint32 td     = 8;  // Derivative Time (TD)
+  double pv = 1;  // Process Value
+  double sp = 2;  // Setpoint
+  bool   out1 = 3;  // Output 1 status
+  bool   out2 = 4;  // Output 2 status
+  bool   at = 5;  // Autotune status
+  double tp = 6;  // Proportional Band (TP)
+  uint32 ti = 7;  // Integral Time (TI)
+  uint32 td = 8;  // Derivative Time (TD)
   uint32 t_group = 9;  // Temperature Group
-  string rs     = 10; // Run Status
-  string vunit  = 11; // Value Unit (e.g., "°C", "%")
-  uint32 pc     = 12; // Current Power (e.g., PWM output)
-  uint32 ps     = 13; // Max Power (e.g., PWM period)
-  double psr    = 14; // Power Ratio (PC/PS)
+  string rs = 10; // Run Status
+  string vunit = 11; // Value Unit (e.g., "°C", "%")
+  uint32 pc = 12; // Current Power (e.g., PWM output)
+  uint32 ps = 13; // Max Power (e.g., PWM period)
+  double psr = 14; // Power Ratio (PC/PS)
 }
 
 // GetStatsRequest is the request for current PXU statistics.
@@ -29,6 +29,26 @@ message GetStatsRequest {}
 // GetStatsResponse contains the current PXU statistics.
 message GetStatsResponse {
   Stats stats = 1;
+}
+
+message Profile {
+  message Segment {
+    double sp = 1;
+    double t = 2;
+  }
+
+  uint32 id = 1;                  // profile identity
+  repeated Segment segments = 2;  // setpoint/soak time pairs
+  optional uint32 lnk = 3;        // link to next profile
+  optional uint32 cr = 4;         // cycle repeat
+  optional uint32 rr = 5;         // ramp rate
+}
+
+message GetProfileRequest {
+}
+
+message SetProfileRequest {
+  Profile profile = 1;
 }
 
 // SetSetpointRequest sets the setpoint value for the PXU.
