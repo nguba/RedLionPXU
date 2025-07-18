@@ -14,8 +14,8 @@ func TestMockModbus_BasicOperations(t *testing.T) {
 	}
 
 	// Test setting and reading registers
-	mock.SetRegister(100, 1234)
-	mock.SetRegister(101, 5678)
+	_ = mock.SetRegister(100, 1234)
+	_ = mock.SetRegister(101, 5678)
 
 	regs, err := mock.ReadRegisters(100, 2)
 	if err != nil {
@@ -29,13 +29,15 @@ func TestMockModbus_BasicOperations(t *testing.T) {
 	if regs[0] != 1234 || regs[1] != 5678 {
 		t.Errorf("expected [1234, 5678], got %v", regs)
 	}
+
+	t.Log(regs)
 }
 
 func TestMockModbus_ErrorSimulation(t *testing.T) {
 	mock := NewMockModbus()
 
 	// Configure mock to return errors
-	mock.SimulateError(true, "test error")
+	mock.SimulateError(true, "simulated modbus error")
 
 	err := mock.SetUnitId(1)
 	if err == nil {
@@ -43,6 +45,7 @@ func TestMockModbus_ErrorSimulation(t *testing.T) {
 	}
 
 	_, err = mock.ReadRegisters(0, 10)
+	t.Log(err)
 	if err == nil {
 		t.Error("expected error from ReadRegisters but got none")
 	}
