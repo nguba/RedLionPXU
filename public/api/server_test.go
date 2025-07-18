@@ -41,9 +41,11 @@ func setupTestServer(t *testing.T) v2.RedLionPxuClient {
 		svc.Stop()
 	})
 
-	if err := svc.Start(); err != nil {
-		log.Fatalf("failed to serve: %v", err)
-	}
+	go func() {
+		if err := svc.Start(); err != nil {
+			log.Fatalf("failed to serve: %v", err)
+		}
+	}()
 
 	// setup client
 	dialer := func(context.Context, string) (net.Conn, error) {

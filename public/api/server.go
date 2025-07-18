@@ -38,12 +38,11 @@ func (s *Server) Stop() {
 }
 
 func (s *Server) Start() error {
-	go func() {
-		log.Printf("Started gRPC server on: %v", s.listener.Addr())
-		if err := s.grpcServer.Serve(s.listener); err != nil {
-			log.Fatalf("failed to serve: %v", err)
-		}
-	}()
+
+	log.Printf("Started gRPC server on: %v", s.listener.Addr())
+	if err := s.grpcServer.Serve(s.listener); err != nil {
+		log.Fatalf("failed to serve: %v", err)
+	}
 
 	return nil
 }
